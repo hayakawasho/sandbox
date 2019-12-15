@@ -1,0 +1,15 @@
+/* base */
+@import 'tailwindcss/base';
+@import 'base/custom-properties';
+@import 'base/custom-media';
+@import 'base/base';
+
+/* parts */
+
+/* namespace */
+
+/* other */
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import 'utils/index';
+@import '_shame';

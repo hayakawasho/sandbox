@@ -1,0 +1,17 @@
+:root {
+  --font:
+    'Hiragino Kaku Gothic Pro',
+    'ヒラギノ角ゴ Pro W3',
+    'メイリオ',
+    Meiryo,
+    sans-serif;
+  --font-en:
+    'Lato',
+    'Hiragino Kaku Gothic Pro',
+    'ヒラギノ角ゴ Pro W3',
+    'メイリオ',
+    Meiryo,
+    sans-serif;
+  --vh: 1vh;
+  --header: 60px;
+}

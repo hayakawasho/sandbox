@@ -1,0 +1,78 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="<%= description %>">
+<link rel="canonical" href="<%= url %>">
+
+<meta property="og:title" content="<%= title %>">
+<meta property="og:site_name" content="<%= siteName %>">
+<meta property="og:type" content="website">
+<meta property="og:url" content="<%= url %>">
+<meta property="og:description" content="<%= description %>">
+<meta property="og:image" content="<%= ogImage %>">
+<meta property="og:locale" content="ja_JP">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="<%= title %>">
+<meta name="twitter:description" content="<%= description %>">
+<meta name="twitter:image:src" content="<%= ogImage %>">
+
+<style>
+  html,
+  body {
+    padding: 0;
+    margin: 0;
+  }
+
+  body {
+    color: #231815;
+    background-color: #fff;
+  }
+
+  :any-link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  ol,
+  ul {
+    list-style: none;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
+  }
+
+  .app {
+    width: 100%;
+    height: 100%;
+  }
+
+  .app.is-loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  img.lazyload:not([src]) {
+    visibility: hidden;
+  }
+
+</style>
+
+<% if (process.env.NODE_ENV === 'production') { -%>
+<link rel="preload" href="/index.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<% } -%>
+
+<link rel="preload" as="script" href="/vendor.js">
+<link rel="preload" as="script" href="/index.js">
+
+<script async>
+	/*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+	!function(n){"use strict";n.loadCSS||(n.loadCSS=function(){});var o=loadCSS.relpreload={};if(o.support=function(){var e;try{e=n.document.createElement("link").relList.supports("preload")}catch(t){e=!1}return function(){return e}}(),o.bindMediaToggle=function(t){var e=t.media||"all";function a(){t.addEventListener?t.removeEventListener("load",a):t.attachEvent&&t.detachEvent("onload",a),t.setAttribute("onload",null),t.media=e}t.addEventListener?t.addEventListener("load",a):t.attachEvent&&t.attachEvent("onload",a),setTimeout(function(){t.rel="stylesheet",t.media="only x"}),setTimeout(a,3e3)},o.poly=function(){if(!o.support())for(var t=n.document.getElementsByTagName("link"),e=0;e<t.length;e++){var a=t[e];"preload"!==a.rel||"style"!==a.getAttribute("as")||a.getAttribute("data-loadcss")||(a.setAttribute("data-loadcss",!0),o.bindMediaToggle(a))}},!o.support()){o.poly();var t=n.setInterval(o.poly,500);n.addEventListener?n.addEventListener("load",function(){o.poly(),n.clearInterval(t)}):n.attachEvent&&n.attachEvent("onload",function(){o.poly(),n.clearInterval(t)})}"undefined"!=typeof exports?exports.loadCSS=loadCSS:n.loadCSS=loadCSS}("undefined"!=typeof global?global:this);
+</script>
