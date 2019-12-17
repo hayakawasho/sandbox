@@ -26,7 +26,7 @@ export default class Particle extends THREE.Group {
 
   private _velocity: Array<THREE.Vector3> = []
   private _force: Array<THREE.Vector3> = []
-  private _friction = 0.01 // 摩擦係数
+  private _friction = 0.01
 
   private get ww(): number {
     return this._store.windowWidth
@@ -81,14 +81,12 @@ export default class Particle extends THREE.Group {
       vertex.y = THREE.Math.randFloat(0, wh)
       vertex.z = defaults.depth
 
-      // const len = Math.random() * 20
-      // const r = Math.random() * Math.PI * 2
+      const len = Math.random() * 20
+      const r = Math.random() * Math.PI * 2
 
       const velocity = new THREE.Vector3(0, 0, 0)
-      // velocity.x = Math.cos(r) * len
-      // velocity.y = Math.sin(r) * len
-      velocity.x = THREE.Math.randFloat(-10, 10)
-      velocity.y = THREE.Math.randFloat(-10, 10)
+      velocity.x = Math.cos(r) * len
+      velocity.y = Math.sin(r) * len
 
       this._velocity.push(velocity)
 
@@ -111,7 +109,7 @@ export default class Particle extends THREE.Group {
     this._app.geometry.verticesNeedUpdate = true
 
     for (let i = 0; i < defaults.len; i++) {
-      const p = this._app.geometry.vertices[i]
+      const pos = this._app.geometry.vertices[i]
       const f = this._force[i]
       const v = this._velocity[i]
 
@@ -121,25 +119,25 @@ export default class Particle extends THREE.Group {
 
       this._updateForce(f, v)
 
-      this._updatePos(p, f, v)
+      this._updatePos(pos, f, v)
 
-      if (p.x > this.ww) {
-        p.x = this.ww
+      if (pos.x > this.ww) {
+        pos.x = this.ww
         v.x *= -1
       }
 
-      if (p.x < 0) {
-        p.x = 0
+      if (pos.x < 0) {
+        pos.x = 0
         v.x *= -1
       }
 
-      if (p.y > this.wh) {
-        p.y = this.wh
+      if (pos.y > this.wh) {
+        pos.y = this.wh
         v.y *= -1
       }
 
-      if (p.y < 0) {
-        p.y = 0
+      if (pos.y < 0) {
+        pos.y = 0
         v.y *= -1
       }
     }
