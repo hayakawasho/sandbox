@@ -24,7 +24,6 @@ export default class Particle extends THREE.Group {
   }
   private _ticker: Ticker = new Ticker
 
-  private _posOfForce = new THREE.Vector3(0, 0, 0)
   private _velocity: Array<THREE.Vector3> = []
   private _force: Array<THREE.Vector3> = []
   private _friction = 0.01 // 摩擦係数
@@ -80,9 +79,14 @@ export default class Particle extends THREE.Group {
       const vertex = new THREE.Vector3(0, 0, 0)
       vertex.x = THREE.Math.randFloat(0, ww)
       vertex.y = THREE.Math.randFloat(0, wh)
-      vertex.z = THREE.Math.randFloat(0, defaults.depth)
+      vertex.z = defaults.depth
+
+      // const len = Math.random() * 20
+      // const r = Math.random() * Math.PI * 2
 
       const velocity = new THREE.Vector3(0, 0, 0)
+      // velocity.x = Math.cos(r) * len
+      // velocity.y = Math.sin(r) * len
       velocity.x = THREE.Math.randFloat(-10, 10)
       velocity.y = THREE.Math.randFloat(-10, 10)
 
@@ -111,35 +115,61 @@ export default class Particle extends THREE.Group {
       const f = this._force[i]
       const v = this._velocity[i]
 
-      // リセット
-      f.x = 0
-      f.y = 0
+      this._resetForce(f)
 
-      // 摩擦係数
-      f.x -= v.x * this._friction
-      f.y -= v.y * this._friction
+      this._addForce(f, 0, -0.5)
 
-      // 力から速度計算
-      v.x += f.x
-      v.y += f.y
+      this._updateForce(f, v)
 
-      // 速度から位置を計算
-      p.x += v.x
-      p.y += v.y
-      p.z += v.z
+      this._updatePos(p, f, v)
 
-      if (p.x < 0 || p.x > this.ww) {
+      if (p.x > this.ww) {
+        p.x = this.ww
         v.x *= -1
       }
 
-      if (p.y < 0 || p.y > this.wh) {
+      if (p.x < 0) {
+        p.x = 0
+        v.x *= -1
+      }
+
+      if (p.y > this.wh) {
+        p.y = this.wh
+        v.y *= -1
+      }
+
+      if (p.y < 0) {
+        p.y = 0
         v.y *= -1
       }
     }
   }
 
+  private _resetForce(force) {
+    force.x = 0
+    force.y = 0
+  }
+
+  private _addForce(force, forceX: number, forceY: number) {
+    force.x += forceX
+    force.y += forceY
+  }
+
+  private _updateForce(force, velocity) {
+    force.x -= velocity.x * this._friction
+    force.y -= velocity.y * this._friction
+  }
+
+  private _updatePos(pos, force, velocity) {
+    velocity.x += force.x
+    velocity.y += force.y
+
+    pos.x += velocity.x
+    pos.y += velocity.y
+  }
+
   private _resize(ww, wh) {
     this.position.x = -this.centerX
-    this.position.y = - this.centerY
+    this.position.y = -this.centerY
   }
 }
