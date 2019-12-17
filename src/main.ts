@@ -10,7 +10,7 @@ import LoadModule from '~/js/services/LoadModule'
 import UaBootable from '~/js/services/UaBootable'
 import Bootstrap from '~/js/services/Bootstrap'
 import DefaultPage from '~/js/pages/DefaultPage'
-import Canvas from '~/js/context/webgl'
+import Canvas from '~/js/context/webgl/Canvas'
 
 ;(() => {
   // BEING IMPORTANT (Bug Safari 10.1)

@@ -1,9 +1,9 @@
 import * as THREE from 'three'
 import { gsap } from 'gsap'
-import { IEventBus, ILoader, IStore, IBootable } from '~/js/defs'
-import { inject, injectable } from 'tsyringe'
+import { IStore } from '~/js/defs'
+import { inject, autoInjectable } from 'tsyringe'
 import { Services } from '~/js/const'
-import { reaction, when } from 'mobx'
+import { when } from 'mobx'
 import { bindAll } from 'lodash-es'
 import { Ticker } from '@pixi/ticker'
 
@@ -16,24 +16,12 @@ const defaults = {
   }
 }
 
-interface ITHREE {
-  renderer: THREE.WebGLRenderer,
-  scene: THREE.Scene,
-  camera: THREE.PerspectiveCamera,
-  geometry: THREE.Geometry,
-  material: THREE.PointsMaterial
-}
-
-@injectable()
-export default class Canvas implements IBootable {
-  private elements = {
-    wrap: document.getElementsByClassName('canvas')[0],
-    canvas: (document.getElementById('js-canvas') as HTMLCanvasElement)
-  }
-  private _app: ITHREE = {
-    renderer: null,
-    scene: null,
-    camera: null,
+@autoInjectable()
+export default class Particle extends THREE.Group {
+  private _app: {
+    geometry: THREE.Geometry,
+    material: THREE.PointsMaterial
+  } = {
     geometry: null,
     material: null
   }
@@ -42,7 +30,7 @@ export default class Canvas implements IBootable {
   private _clock = new THREE.Clock(true)
   private _tick = null
   private _forcePhase: 'attraction' | 'repulsion' = 'attraction'
-  private _frameCount = 1
+  private _frame = 1
 
   private get ww(): number {
     return this._store.windowWidth
@@ -60,65 +48,27 @@ export default class Canvas implements IBootable {
     return this._store.centerY
   }
 
-  constructor(
-    @inject(Services.EVENT_BUS) private _bus: IEventBus,
-    @inject(Services.STORE) private _store: IStore
-  ) {
+  constructor(@inject(Services.STORE) private _store?: IStore) {
+    super()
+
+    bindAll(this, '_update')
+
     when(
       () => this._store.state.canvasLoaded,
       () => {
-        this.elements.wrap.classList.add('is-visible')
         this._ticker.start()
       }
     )
 
-    reaction(
-      () => [this.ww, this.wh],
-      ([ww, wh]) => {
-        if (!this._app.renderer) return
-
-        const radFov = (this._app.camera.fov * Math.PI) / 180
-
-        this._app.camera.aspect = ww / wh
-
-        this._app.camera.position.set(
-          0,
-          0,
-          this.centerY / Math.tan(radFov * 0.5)
-        )
-        this._app.camera.updateProjectionMatrix()
-
-        this._app.renderer.setSize(this.ww, this.wh)
-      }
-    )
-
-    bindAll(this, '_update')
+    this.setup()
   }
 
-  boot() {
+  setup() {
     const ww = window.innerWidth
     const wh = window.innerHeight
 
     this._ticker.maxFPS = 60
     this._ticker.add(this._update)
-
-    this._app.renderer = new THREE.WebGLRenderer({
-      canvas: this.elements.canvas,
-      alpha: true
-    })
-
-    this._app.renderer.setPixelRatio(window.devicePixelRatio)
-    this._app.renderer.setSize(ww, wh)
-
-    this._app.scene = new THREE.Scene()
-
-    this._app.camera = new THREE.PerspectiveCamera(
-      60,
-      ww / wh,
-      10,
-      10000
-    )
-    this._app.camera.lookAt(this._app.scene.position)
 
     this._app.geometry = new THREE.Geometry()
 
@@ -143,19 +93,7 @@ export default class Canvas implements IBootable {
 
     const mesh = new THREE.Points(this._app.geometry, this._app.material)
 
-    this._app.scene.add(mesh)
-
-    this._store.setState({
-      canvasLoaded: true
-    })
-  }
-
-  paint(canvas: HTMLCanvasElement) {
-    const source = this._app.renderer.domElement
-    const ctx = canvas.getContext('2d')
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.drawImage(source, 0, 0, source.width, source.height)
+    this.add(mesh)
   }
 
   private _update(deltaTime) {
@@ -185,7 +123,7 @@ export default class Canvas implements IBootable {
       this._vertexUpdate(particle, this._posOfForce, deltaTime)
     }
 
-    if (this._frameCount % (60 * 8) === 0) {
+    if (this._frame % (60 * 8) === 0) {
       if (this._forcePhase === 'attraction') {
         this._forcePhase = 'repulsion'
       } else if (this._forcePhase === 'repulsion') {
@@ -193,13 +131,7 @@ export default class Canvas implements IBootable {
       }
     }
 
-    this._frameCount++
-
-    this._app.renderer.render(this._app.scene, this._app.camera)
-  }
-
-  private _stop() {
-
+    this._frame++
   }
 
   private _vertexUpdate(vertex, posOfForce, deltaTime) {
