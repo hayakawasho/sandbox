@@ -9,7 +9,8 @@ import { Ticker } from '@pixi/ticker'
 
 const defaults = {
   len: 10000,
-  depth: 0
+  depth: 0,
+  size: 2
 }
 
 @autoInjectable()
@@ -22,14 +23,11 @@ export default class Particle extends THREE.Group {
     material: null
   }
   private _ticker: Ticker = new Ticker
-  private _clock = new THREE.Clock(true)
-  private _tick = null
-  private _frame = 1
 
   private _posOfForce = new THREE.Vector3(0, 0, 0)
   private _velocity: Array<THREE.Vector3> = []
   private _force: Array<THREE.Vector3> = []
-  private _friction
+  private _friction = 0.01 // 摩擦係数
 
   private get ww(): number {
     return this._store.windowWidth
@@ -89,12 +87,15 @@ export default class Particle extends THREE.Group {
       velocity.y = THREE.Math.randFloat(-10, 10)
 
       this._velocity.push(velocity)
+
+      this._force.push(new THREE.Vector3(0, 0, 0))
+
       this._app.geometry.vertices.push(vertex)
     }
 
     this._app.material = new THREE.PointsMaterial({
       color: 0x000000,
-      size: 2
+      size: defaults.size
     })
 
     const mesh = new THREE.Points(this._app.geometry, this._app.material)
@@ -105,14 +106,24 @@ export default class Particle extends THREE.Group {
   private _update(deltaTime) {
     this._app.geometry.verticesNeedUpdate = true
 
-    const delta = this._clock.getDelta()
-
-    this._tick += delta * 0.1 * deltaTime
-
     for (let i = 0; i < defaults.len; i++) {
       const p = this._app.geometry.vertices[i]
+      const f = this._force[i]
       const v = this._velocity[i]
 
+      // リセット
+      f.x = 0
+      f.y = 0
+
+      // 摩擦係数
+      f.x -= v.x * this._friction
+      f.y -= v.y * this._friction
+
+      // 力から速度計算
+      v.x += f.x
+      v.y += f.y
+
+      // 速度から位置を計算
       p.x += v.x
       p.y += v.y
       p.z += v.z
