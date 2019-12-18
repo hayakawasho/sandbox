@@ -1,16 +1,17 @@
 import * as THREE from 'three'
-import { gsap } from 'gsap'
 import { IStore } from '~/js/defs'
 import { inject, autoInjectable } from 'tsyringe'
 import { Services } from '~/js/const'
 import { when, reaction } from 'mobx'
 import { bindAll } from 'lodash-es'
 import { Ticker } from '@pixi/ticker'
+import Utils from '~/js/utils/Utils'
 
 const defaults = {
   len: 10000,
   depth: 0,
-  size: 2
+  size: 1,
+  friction: 0.01
 }
 
 @autoInjectable()
@@ -19,14 +20,15 @@ export default class Particle extends THREE.Group {
     geometry: THREE.Geometry,
     material: THREE.PointsMaterial
   } = {
-    geometry: null,
-    material: null
+    geometry: new THREE.Geometry(),
+    material: new THREE.PointsMaterial({
+      color: 0x000000,
+      size: defaults.size
+    })
   }
   private _ticker: Ticker = new Ticker
-
   private _velocity: Array<THREE.Vector3> = []
   private _force: Array<THREE.Vector3> = []
-  private _friction = 0.01
 
   private get ww(): number {
     return this._store.windowWidth
@@ -51,7 +53,8 @@ export default class Particle extends THREE.Group {
 
     when(
       () => this._store.state.canvasLoaded,
-      () => {
+      async () => {
+        await Utils.nextTick()
         this._ticker.start()
       }
     )
@@ -59,7 +62,8 @@ export default class Particle extends THREE.Group {
     reaction(
       () => [this.ww, this.wh],
       ([ww, wh]) => {
-        this._resize(ww, wh)
+        this.position.x = -this.centerX
+        this.position.y = -this.centerY
       }
     )
 
@@ -73,13 +77,11 @@ export default class Particle extends THREE.Group {
     this._ticker.maxFPS = 60
     this._ticker.add(this._update)
 
-    this._app.geometry = new THREE.Geometry()
-
     for (let i = 0; i < defaults.len; i++) {
-      const vertex = new THREE.Vector3(0, 0, 0)
-      vertex.x = THREE.Math.randFloat(0, ww)
-      vertex.y = THREE.Math.randFloat(0, wh)
-      vertex.z = defaults.depth
+      const pos = new THREE.Vector3(0, 0, 0)
+      pos.x = THREE.Math.randFloat(0, ww)
+      pos.y = THREE.Math.randFloat(0, wh)
+      pos.z = THREE.Math.randFloat(-defaults.depth, defaults.depth)
 
       const len = Math.random() * 20
       const r = Math.random() * Math.PI * 2
@@ -92,13 +94,8 @@ export default class Particle extends THREE.Group {
 
       this._force.push(new THREE.Vector3(0, 0, 0))
 
-      this._app.geometry.vertices.push(vertex)
+      this._app.geometry.vertices.push(pos)
     }
-
-    this._app.material = new THREE.PointsMaterial({
-      color: 0x000000,
-      size: defaults.size
-    })
 
     const mesh = new THREE.Points(this._app.geometry, this._app.material)
 
@@ -154,8 +151,8 @@ export default class Particle extends THREE.Group {
   }
 
   private _updateForce(force, velocity) {
-    force.x -= velocity.x * this._friction
-    force.y -= velocity.y * this._friction
+    force.x -= velocity.x * defaults.friction
+    force.y -= velocity.y * defaults.friction
   }
 
   private _updatePos(pos, force, velocity) {
@@ -165,9 +162,5 @@ export default class Particle extends THREE.Group {
     pos.x += velocity.x
     pos.y += velocity.y
   }
-
-  private _resize(ww, wh) {
-    this.position.x = -this.centerX
-    this.position.y = -this.centerY
-  }
 }
+
