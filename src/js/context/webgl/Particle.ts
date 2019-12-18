@@ -67,15 +67,15 @@ export default class Particle extends THREE.Group {
       }
     )
 
+    this._ticker.maxFPS = 60
+    this._ticker.add(this._update)
+
     this.setup()
   }
 
   setup() {
     const ww = window.innerWidth
     const wh = window.innerHeight
-
-    this._ticker.maxFPS = 60
-    this._ticker.add(this._update)
 
     for (let i = 0; i < defaults.len; i++) {
       const pos = new THREE.Vector3(0, 0, 0)
