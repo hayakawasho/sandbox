@@ -16,13 +16,15 @@ export default class Canvas implements IBootable {
     renderer: THREE.WebGLRenderer,
     scene: THREE.Scene,
     camera: THREE.PerspectiveCamera,
+    mesh: Particle
   } = {
     renderer: null,
     scene: null,
     camera: null,
+    mesh: new Particle({
+      size: 1
+    })
   }
-
-  private _mesh: Particle = new Particle
 
   private _requestId: number = 0
 
@@ -80,7 +82,7 @@ export default class Canvas implements IBootable {
     )
     this._app.camera.lookAt(this._app.scene.position)
 
-    this._app.scene.add(this._mesh)
+    this._app.scene.add(this._app.mesh)
 
     this._store.setState({
       canvasLoaded: true

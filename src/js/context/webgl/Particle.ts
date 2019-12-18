@@ -16,19 +16,12 @@ const defaults = {
 
 @autoInjectable()
 export default class Particle extends THREE.Group {
-  private _app: {
-    geometry: THREE.Geometry,
-    material: THREE.PointsMaterial
-  } = {
-    geometry: new THREE.Geometry(),
-    material: new THREE.PointsMaterial({
-      color: 0x000000,
-      size: defaults.size
-    })
-  }
+  private _options = null
+  private _geometry: THREE.Geometry = new THREE.Geometry()
   private _ticker: Ticker = new Ticker
   private _velocity: Array<THREE.Vector3> = []
   private _force: Array<THREE.Vector3> = []
+  private _frame = 0
 
   private get ww(): number {
     return this._store.windowWidth
@@ -46,8 +39,16 @@ export default class Particle extends THREE.Group {
     return this._store.centerY
   }
 
-  constructor(@inject(Services.STORE) private _store?: IStore) {
+  constructor(
+    options,
+    @inject(Services.STORE) private _store?: IStore
+  ) {
     super()
+
+    this._options = {
+      ...defaults,
+      ...options || {}
+    }
 
     bindAll(this, '_update')
 
@@ -77,11 +78,11 @@ export default class Particle extends THREE.Group {
     const ww = window.innerWidth
     const wh = window.innerHeight
 
-    for (let i = 0; i < defaults.len; i++) {
+    for (let i = 0; i < this._options.len; i++) {
       const pos = new THREE.Vector3(0, 0, 0)
       pos.x = THREE.Math.randFloat(0, ww)
       pos.y = THREE.Math.randFloat(0, wh)
-      pos.z = THREE.Math.randFloat(-defaults.depth, defaults.depth)
+      pos.z = THREE.Math.randFloat(-this._options.depth, this._options.depth)
 
       const len = Math.random() * 20
       const r = Math.random() * Math.PI * 2
@@ -94,19 +95,25 @@ export default class Particle extends THREE.Group {
 
       this._force.push(new THREE.Vector3(0, 0, 0))
 
-      this._app.geometry.vertices.push(pos)
+      this._geometry.vertices.push(pos)
     }
 
-    const mesh = new THREE.Points(this._app.geometry, this._app.material)
+    const mesh = new THREE.Points(
+      this._geometry,
+      new THREE.PointsMaterial({
+        color: 0x000000,
+        size: this._options.size
+      })
+    )
 
     this.add(mesh)
   }
 
   private _update(deltaTime) {
-    this._app.geometry.verticesNeedUpdate = true
+    this._geometry.verticesNeedUpdate = true
 
-    for (let i = 0; i < defaults.len; i++) {
-      const pos = this._app.geometry.vertices[i]
+    for (let i = 0; i < this._options.len; i++) {
+      const pos = this._geometry.vertices[i]
       const f = this._force[i]
       const v = this._velocity[i]
 
@@ -138,6 +145,8 @@ export default class Particle extends THREE.Group {
         v.y *= -1
       }
     }
+
+    this._frame++
   }
 
   private _resetForce(force) {
@@ -151,8 +160,8 @@ export default class Particle extends THREE.Group {
   }
 
   private _updateForce(force, velocity) {
-    force.x -= velocity.x * defaults.friction
-    force.y -= velocity.y * defaults.friction
+    force.x -= velocity.x * this._options.friction
+    force.y -= velocity.y * this._options.friction
   }
 
   private _updatePos(pos, force, velocity) {
