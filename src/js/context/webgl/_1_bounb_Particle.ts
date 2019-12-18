@@ -8,11 +8,10 @@ import { Ticker } from '@pixi/ticker'
 import Utils from '~/js/utils/Utils'
 
 const defaults = {
-  len: 2,
+  len: 10000,
   depth: 0,
-  size: 7,
-  friction: 0.01,
-  mass: 1.0
+  size: 1,
+  friction: 0.01
 }
 
 @autoInjectable()
@@ -23,13 +22,6 @@ export default class Particle extends THREE.Group {
   private _velocity: Array<THREE.Vector3> = []
   private _force: Array<THREE.Vector3> = []
   private _frame = 0
-  private _spring = {
-    force: 0,
-    pos: {
-      start: THREE.Vector3,
-      end: THREE.Vector3
-    }
-  }
 
   private get ww(): number {
     return this._store.windowWidth
@@ -92,9 +84,12 @@ export default class Particle extends THREE.Group {
       pos.y = THREE.Math.randFloat(0, wh)
       pos.z = THREE.Math.randFloat(-this._options.depth, this._options.depth)
 
+      const len = Math.random() * 20
+      const r = Math.random() * Math.PI * 2
+
       const velocity = new THREE.Vector3(0, 0, 0)
-      velocity.x = THREE.Math.randFloat(-10, 10)
-      velocity.y = THREE.Math.randFloat(-10, 10)
+      velocity.x = Math.cos(r) * len
+      velocity.y = Math.sin(r) * len
 
       this._velocity.push(velocity)
 
@@ -173,8 +168,8 @@ export default class Particle extends THREE.Group {
     velocity.x += force.x
     velocity.y += force.y
 
-    // pos.x += velocity.x
-    // pos.y += velocity.y
+    pos.x += velocity.x
+    pos.y += velocity.y
   }
 }
 

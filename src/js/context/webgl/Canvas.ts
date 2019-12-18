@@ -21,9 +21,7 @@ export default class Canvas implements IBootable {
     renderer: null,
     scene: null,
     camera: null,
-    mesh: new Particle({
-      size: 1
-    })
+    mesh: new Particle({})
   }
 
   private _requestId: number = 0
