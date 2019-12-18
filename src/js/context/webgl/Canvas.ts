@@ -5,6 +5,7 @@ import { IBootable } from '~/js/defs'
 import { Services } from '~/js/const'
 import { reaction, when } from 'mobx'
 import Particle from './Particle'
+import Perlin from './Perlin'
 
 @injectable()
 export default class Canvas implements IBootable {
@@ -16,13 +17,14 @@ export default class Canvas implements IBootable {
     renderer: THREE.WebGLRenderer,
     scene: THREE.Scene,
     camera: THREE.PerspectiveCamera,
-    mesh: Particle
   } = {
     renderer: null,
     scene: null,
-    camera: null,
-    mesh: new Particle({})
+    camera: null
   }
+
+  private _particle: Particle = new Particle({})
+  private _perlin: Perlin = new Perlin({})
 
   private _requestId: number = 0
 
@@ -80,7 +82,7 @@ export default class Canvas implements IBootable {
     )
     this._app.camera.lookAt(this._app.scene.position)
 
-    this._app.scene.add(this._app.mesh)
+    this._app.scene.add(this._particle)
 
     this._store.setState({
       canvasLoaded: true

@@ -8,27 +8,45 @@ import { Ticker } from '@pixi/ticker'
 import Utils from '~/js/utils/Utils'
 
 const defaults = {
-  len: 2,
+  len: 10000,
   depth: 0,
-  size: 7,
+  size: 2,
   friction: 0.01,
-  mass: 1.0
+  mass: 1.0,
+  radius: 5.0,
+  speed: {
+    x: 1.24,
+    y: 1.5,
+  }
+}
+
+let tick = 0
+
+const rad = Math.PI / 180
+
+interface IVex {
+  force: Array<THREE.Vector3>
+  velocity: Array<THREE.Vector3>
 }
 
 @autoInjectable()
 export default class Particle extends THREE.Group {
   private _options = null
-  private _geometry: THREE.Geometry = new THREE.Geometry()
+
   private _ticker: Ticker = new Ticker
-  private _velocity: Array<THREE.Vector3> = []
-  private _force: Array<THREE.Vector3> = []
+
   private _frame = 0
-  private _spring = {
-    force: 0,
-    pos: {
-      start: THREE.Vector3,
-      end: THREE.Vector3
-    }
+
+  private _clock = new THREE.Clock(true)
+
+  private _geometry: THREE.Geometry = new THREE.Geometry()
+
+  private _posOfForce = new THREE.Vector3(0, 0, 0)
+  private _phase: 'attraction' | 'repulsion' = 'attraction'
+
+  private _vex: IVex = {
+    force: [],
+    velocity: []
   }
 
   private get ww(): number {
@@ -71,8 +89,8 @@ export default class Particle extends THREE.Group {
     reaction(
       () => [this.ww, this.wh],
       ([ww, wh]) => {
-        this.position.x = -this.centerX
-        this.position.y = -this.centerY
+        this.position.x = 0
+        this.position.y = 0
       }
     )
 
@@ -85,30 +103,39 @@ export default class Particle extends THREE.Group {
   setup() {
     const ww = window.innerWidth
     const wh = window.innerHeight
+    const half = {
+      w: ww * .5,
+      h: wh * .5
+    }
 
     for (let i = 0; i < this._options.len; i++) {
       const pos = new THREE.Vector3(0, 0, 0)
-      pos.x = THREE.Math.randFloat(0, ww)
-      pos.y = THREE.Math.randFloat(0, wh)
-      pos.z = THREE.Math.randFloat(-this._options.depth, this._options.depth)
+      pos.x = THREE.Math.randFloat(-half.w, half.w)
+      pos.y = THREE.Math.randFloat(-half.h, half.h)
+      pos.z = THREE.Math.randFloat(
+        -this._options.depth,
+        this._options.depth
+      )
 
-      const velocity = new THREE.Vector3(0, 0, 0)
-      velocity.x = THREE.Math.randFloat(-10, 10)
-      velocity.y = THREE.Math.randFloat(-10, 10)
+      const v = new THREE.Vector3(0, 0, 0)
 
-      this._velocity.push(velocity)
+      const f = new THREE.Vector3(0, 0, 0)
 
-      this._force.push(new THREE.Vector3(0, 0, 0))
+      this._vex.force.push(f)
+
+      this._vex.velocity.push(v)
 
       this._geometry.vertices.push(pos)
     }
 
+    const material = new THREE.PointsMaterial({
+      color: 0x000000,
+      size: this._options.size
+    })
+
     const mesh = new THREE.Points(
       this._geometry,
-      new THREE.PointsMaterial({
-        color: 0x000000,
-        size: this._options.size
-      })
+      material
     )
 
     this.add(mesh)
@@ -117,37 +144,97 @@ export default class Particle extends THREE.Group {
   private _update(deltaTime) {
     this._geometry.verticesNeedUpdate = true
 
+    const delta = this._clock.getDelta()
+
+    tick += delta * 0.1
+
+    const posX = Math.cos(tick * this._options.speed.x)
+    const posY = Math.sin(tick * this._options.speed.y)
+
+    // center
+    if (this._frame < 1) {
+      this._posOfForce.x = posX
+      this._posOfForce.y = posY
+    } else {
+      this._posOfForce.x = posX * -this.centerX
+      this._posOfForce.y = posY * this.centerY
+    }
+
     for (let i = 0; i < this._options.len; i++) {
-      const pos = this._geometry.vertices[i]
-      const f = this._force[i]
-      const v = this._velocity[i]
+      const p = this._geometry.vertices[i]
+      const f = this._vex.force[i]
+      const v = this._vex.velocity[i]
 
       this._resetForce(f)
 
-      this._addForce(f, 0, -0.5)
-
       this._updateForce(f, v)
 
-      this._updatePos(pos, f, v)
-
-      if (pos.x > this.ww) {
-        pos.x = this.ww
-        v.x *= -1
+      if (this._phase === 'attraction') {
+        this._addAttractionForce(
+          p,
+          f,
+          this._posOfForce.x,
+          this._posOfForce.y,
+          this._posOfForce.z,
+          900,
+          0.02
+        )
+        this._addRepulsionForce(
+          p,
+          f,
+          this._posOfForce.x * 0.5,
+          this._posOfForce.y * 0.5,
+          this._posOfForce.z * 0.5,
+          200,
+          0.02
+        )
+      } else if (this._phase === 'repulsion') {
+        this._addAttractionForce(
+          p,
+          f,
+          this._posOfForce.x * -0.5,
+          this._posOfForce.y * -0.5,
+          this._posOfForce.z * -0.5,
+          500,
+          0.02
+        )
+        this._addRepulsionForce(
+          p,
+          f,
+          this._posOfForce.x,
+          this._posOfForce.y,
+          this._posOfForce.z,
+          300,
+          0.02
+        )
       }
 
-      if (pos.x < 0) {
-        pos.x = 0
-        v.x *= -1
+      this._updatePos(p, f, v)
+
+      if (p.x > this.centerX) {
+        // v.x *= -1
+        p.x = -this.centerX
+      }
+      if (p.y > this.centerY) {
+        // v.y *= -1
+        p.y = -this.centerY
       }
 
-      if (pos.y > this.wh) {
-        pos.y = this.wh
-        v.y *= -1
+      if (p.x < -this.centerX) {
+        // v.x *= -1
+        p.x = this.centerX
       }
+      if (p.y < -this.centerY) {
+        // v.y *= -1
+        p.y = this.centerY
+      }
+    }
 
-      if (pos.y < 0) {
-        pos.y = 0
-        v.y *= -1
+    if (this._frame % (60 * 8) === 0) {
+      if (this._phase === 'attraction') {
+        this._phase = 'repulsion'
+      } else if (this._phase === 'repulsion') {
+        this._phase = 'attraction';
       }
     }
 
@@ -159,22 +246,59 @@ export default class Particle extends THREE.Group {
     force.y = 0
   }
 
-  private _addForce(force, forceX: number, forceY: number) {
-    force.x += forceX
-    force.y += forceY
-  }
-
   private _updateForce(force, velocity) {
-    force.x -= velocity.x * this._options.friction
-    force.y -= velocity.y * this._options.friction
+    force.x -= velocity.x * this._options.friction * 0.41
+    force.y -= velocity.y * this._options.friction * 0.41
   }
 
-  private _updatePos(pos, force, velocity) {
-    velocity.x += force.x
-    velocity.y += force.y
+  private _updatePos(vex, force, velocity) {
+    velocity.x += force.x * 0.41
+    velocity.y += force.y * 0.41
 
-    // pos.x += velocity.x
-    // pos.y += velocity.y
+    vex.x += velocity.x
+    vex.y += velocity.y
+  }
+
+  private _addAttractionForce(
+    vex, force, forceX, forceY, forceZ, radius, scale
+  ) {
+    let diff = new THREE.Vector3(0, 0, 0)
+    diff.x = vex.x - forceX
+    diff.y = vex.y - forceY
+    diff.z = vex.z - forceZ
+
+    const l = diff.length()
+
+    if (l < radius) {
+      const pct = 1 - (l / radius) // normalize
+
+      diff.normalize()
+
+      force.x = force.x - (diff.x * scale * pct)
+      force.y = force.y - (diff.y * scale * pct)
+      force.z = force.z - (diff.z * scale * pct)
+    }
+  }
+
+  private _addRepulsionForce(
+    vex, force, forceX, forceY, forceZ, radius, scale
+  ) {
+    let diff = new THREE.Vector3(0, 0, 0)
+    diff.x = vex.x - forceX
+    diff.y = vex.y - forceY
+    diff.z = vex.z - forceZ
+
+    const l = diff.length()
+
+    if (l < radius) {
+      const pct = 1 - (l / radius) // normalize
+
+      diff.normalize()
+
+      force.x = force.x + (diff.x * scale * pct)
+      force.y = force.y + (diff.y * scale * pct)
+      force.z = force.z + (diff.z * scale * pct)
+    }
   }
 }
 
