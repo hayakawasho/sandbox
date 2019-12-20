@@ -7,13 +7,35 @@
 </head>
 
 <body>
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-analytics.js"></script>
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyC_mrXaYwtmhE9Y2PeDduioKMq5h3P88Dk",
+    authDomain: "shoco-sketch.firebaseapp.com",
+    databaseURL: "https://shoco-sketch.firebaseio.com",
+    projectId: "shoco-sketch",
+    storageBucket: "shoco-sketch.appspot.com",
+    messagingSenderId: "342435876629",
+    appId: "1:342435876629:web:6aaddaaf7509d74e87e31c",
+    measurementId: "G-T1MVW89ZSL"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+</script>
 
 <div class="viewport" data-module="Viewport"></div>
 
 <div id="js-app" class="app is-loading">
 
   <div id="js-canvas-wrap" class="canvas">
-    <canvas id="js-canvas"></canvas>
+    <canvas></canvas>
   </div>
 
 
