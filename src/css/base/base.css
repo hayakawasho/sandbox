@@ -76,6 +76,10 @@ button:focus {
       pointer-events: none !important;
     }
   }
+
+  &.is-webfontloaded {
+    font-family: 'Fjalla One', sans-serif;
+  }
 }
 
 .viewport {

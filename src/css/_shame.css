@@ -29,3 +29,19 @@
     height: 100%;
   }
 }
+
+.home-sketchList {
+  & p {
+    font-size: 5vw;
+    font-family: var(--font);
+    letter-spacing: .05em;
+  }
+
+  & h2 {
+    font-size: 10vw;
+    letter-spacing: .26em;
+    display: inline;
+    background-color: #000;
+    color: #fff;
+  }
+}

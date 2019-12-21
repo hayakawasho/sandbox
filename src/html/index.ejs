@@ -5,8 +5,29 @@
 
   var SCOPE = 'home'
 
+  var sketchList = [
+    {
+      href: '/attraction/',
+      ttl: 'Particle',
+      desc: 'attraction + repulsion'
+    }
+  ]
+
 -%>
 
 <%- include(rootPath + '_inc/_top') -%>
+
+<div class="u-mt-48">
+  <ul class="<%= SCOPE %>-sketchList">
+    <% sketchList.forEach((i, index) => { %>
+    <li>
+      <a href="<%= i.href %>" target="_blank" rel="noopener noreferrer">
+        <p><%- i.desc %></p>
+        <h2><%- i.ttl %></h2>
+      </a>
+    </li>
+    <% }); %>
+  </ul>
+</div>
 
 <%- include(rootPath + '_inc/_bottom') -%>

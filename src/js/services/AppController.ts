@@ -18,9 +18,16 @@ export default class AppController extends Abstract {
     super()
 
     when(
-      () => this._store.state.loaded,
+      () => this._store.state.siteLoaded,
       () => {
         this._app.classList.remove('is-loading')
+      }
+    )
+
+    when(
+      () => this._store.state.webfontLoaded,
+      () => {
+        this._app.classList.add('is-webfontloaded')
       }
     )
   }
@@ -31,6 +38,7 @@ export default class AppController extends Abstract {
 
     await Utils.timeout(
       [
+        this._loaders.loadWebfont(['Fjalla One']),
         this._loaders.promiseLoad()
       ],
       3000
@@ -40,7 +48,8 @@ export default class AppController extends Abstract {
     console.timeEnd('load time')
 
     this._store.setState({
-      loaded: true
+      siteLoaded: true,
+      webfontLoaded: true
     })
 
     console.time('scene init time')

@@ -1,14 +1,16 @@
 import * as THREE from 'three'
 import { IStore } from '~/js/defs'
-import { inject, injectable } from 'tsyringe'
+import { inject, autoInjectable } from 'tsyringe'
 import { IBootable } from '~/js/defs'
 import { Services } from '~/js/const'
 import { reaction, when } from 'mobx'
 import Particle from './Particle'
 import Perlin from './Perlin'
 
-@injectable()
+@autoInjectable()
 export default class Canvas implements IBootable {
+  private _options
+
   private elements = {
     wrap: document.getElementById('js-canvas-wrap')
   }
@@ -22,9 +24,6 @@ export default class Canvas implements IBootable {
     scene: null,
     camera: null
   }
-
-  private _particle: Particle = new Particle({})
-  private _perlin: Perlin = new Perlin({})
 
   private _requestId: number = 0
 
@@ -41,8 +40,11 @@ export default class Canvas implements IBootable {
   }
 
   constructor(
-    @inject(Services.STORE) private _store: IStore
+    options,
+    @inject(Services.STORE) private _store?: IStore
   ) {
+
+    this._options = options
 
     when(
       () => this._store.state.canvasLoaded,
@@ -82,7 +84,7 @@ export default class Canvas implements IBootable {
     )
     this._app.camera.lookAt(this._app.scene.position)
 
-    this._app.scene.add(this._particle)
+    this._app.scene.add(this._options.mesh)
 
     this._store.setState({
       canvasLoaded: true
@@ -104,11 +106,7 @@ export default class Canvas implements IBootable {
 
     this._app.camera.aspect = ww / wh
 
-    this._app.camera.position.set(
-      0,
-      0,
-      this.centerY / Math.tan(radFov * 0.5)
-    )
+    this._app.camera.position.z = this.centerY / Math.tan(radFov * 0.5)
 
     this._app.camera.updateProjectionMatrix()
 

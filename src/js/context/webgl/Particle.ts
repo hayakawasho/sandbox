@@ -10,7 +10,7 @@ import Utils from '~/js/utils/Utils'
 const defaults = {
   len: 10000,
   depth: 0,
-  size: 2,
+  size: 1,
   friction: 0.01,
   mass: 1.0,
   radius: 5.0,
@@ -21,8 +21,6 @@ const defaults = {
 }
 
 let tick = 0
-
-const rad = Math.PI / 180
 
 interface IVex {
   force: Array<THREE.Vector3>
@@ -42,6 +40,7 @@ export default class Particle extends THREE.Group {
   private _geometry: THREE.Geometry = new THREE.Geometry()
 
   private _posOfForce = new THREE.Vector3(0, 0, 0)
+
   private _phase: 'attraction' | 'repulsion' = 'attraction'
 
   private _vex: IVex = {

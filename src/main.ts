@@ -6,11 +6,10 @@ import { Services } from '~/js/const'
 import { IRouter } from '~/js/defs'
 import Loaders from '~/js/services/Loaders'
 import AppController from '~/js/services/AppController'
-import LoadModule from '~/js/services/LoadModule'
 import UaBootable from '~/js/services/UaBootable'
 import Bootstrap from '~/js/services/Bootstrap'
 import DefaultPage from '~/js/pages/DefaultPage'
-import Canvas from '~/js/context/webgl/Canvas'
+import AttractionPage from '~/js/pages/AttractionPage'
 
 ;(() => {
   // BEING IMPORTANT (Bug Safari 10.1)
@@ -28,8 +27,6 @@ import Canvas from '~/js/context/webgl/Canvas'
   app.provider(Services.LOADER, Loaders)
   app.provider(Services.STORE, Stores.common)
   app.provider(Services.APP_CONTROLLER, AppController)
-  app.provider(Services.MODULE_LOADER, LoadModule)
-  app.provider(Services.CANVAS, Canvas)
 
   // add bootable services
   app.bootableProvider(Services.UA, UaBootable)
@@ -42,6 +39,11 @@ import Canvas from '~/js/context/webgl/Canvas'
   const router = app.container.resolve<IRouter>(Services.ROUTER)
 
   router
+    .use('/attraction', req => {
+      const page = new AttractionPage()
+      page.path = req.path
+      controller.goto(page)
+    })
     .use('*', req => {
       const defalut = new DefaultPage()
       defalut.path = req.path

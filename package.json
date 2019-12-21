@@ -16,8 +16,6 @@
     "precommit": "lint-staged",
     "watch:html": "chokidar 'src/html/**/*.ejs' -c 'npm run build:html' --initial",
     "watch:js": "webpack-dev-server --hot --inline",
-    "login": "firebase login",
-    "init": "firebase init",
     "deploy": "firebase deploy"
   },
   "author": "hayakawasho",

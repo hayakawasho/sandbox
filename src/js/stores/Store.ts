@@ -2,7 +2,8 @@ import { observable, computed, action } from 'mobx'
 import { IUa } from '~/js/defs'
 
 interface IState {
-  loaded?: boolean,
+  siteLoaded?: boolean,
+  webfontLoaded?: boolean,
   canvasLoaded?: boolean,
   ua?: IUa
 }
@@ -10,7 +11,8 @@ interface IState {
 export default class Store {
   @observable.ref
   private _state = {
-    loaded: false,
+    siteLoaded: false,
+    webfontLoaded: false,
     canvasLoaded: false,
     ua: null
   }
