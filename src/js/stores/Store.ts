@@ -33,12 +33,12 @@ export default class Store {
   windowHeight = 0
 
   @computed
-  get centerX(): number {
+  get windowHalfX(): number {
     return this.windowWidth * 0.5
   }
 
   @computed
-  get centerY(): number {
+  get windowHalfY(): number {
     return this.windowHeight * 0.5
   }
 

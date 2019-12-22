@@ -8,8 +8,10 @@ import Loaders from '~/js/services/Loaders'
 import AppController from '~/js/services/AppController'
 import UaBootable from '~/js/services/UaBootable'
 import Bootstrap from '~/js/services/Bootstrap'
+import LoadModule from '~/js/services/LoadModule'
 import DefaultPage from '~/js/pages/DefaultPage'
 import AttractionPage from '~/js/pages/AttractionPage'
+import BoundPage from '~/js/pages/BoundPage'
 
 ;(() => {
   // BEING IMPORTANT (Bug Safari 10.1)
@@ -27,6 +29,7 @@ import AttractionPage from '~/js/pages/AttractionPage'
   app.provider(Services.LOADER, Loaders)
   app.provider(Services.STORE, Stores.common)
   app.provider(Services.APP_CONTROLLER, AppController)
+  app.provider(Services.MODULE_LOADER, LoadModule)
 
   // add bootable services
   app.bootableProvider(Services.UA, UaBootable)
@@ -41,6 +44,11 @@ import AttractionPage from '~/js/pages/AttractionPage'
   router
     .use('/attraction', req => {
       const page = new AttractionPage()
+      page.path = req.path
+      controller.goto(page)
+    })
+    .use('/bound', req => {
+      const page = new BoundPage()
       page.path = req.path
       controller.goto(page)
     })

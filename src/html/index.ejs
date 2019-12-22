@@ -9,7 +9,27 @@
     {
       href: '/attraction/',
       ttl: 'Particle',
-      desc: 'attraction + repulsion'
+      desc: '引力・斥力'
+    },
+    {
+      href: '/bound/',
+      ttl: 'Gravity',
+      desc: '重力'
+    },
+    {
+      href: '/spring/',
+      ttl: 'Particle',
+      desc: '万有引力'
+    },
+    {
+      href: '/spring/',
+      ttl: 'Spring',
+      desc: '張力'
+    },
+    {
+      href: '/wave/',
+      ttl: 'Wave',
+      desc: '波'
     }
   ]
 
@@ -17,13 +37,20 @@
 
 <%- include(rootPath + '_inc/_top') -%>
 
-<div class="u-mt-48">
+<div class="u-mt-32">
   <ul class="<%= SCOPE %>-sketchList">
     <% sketchList.forEach((i, index) => { %>
     <li>
-      <a href="<%= i.href %>" target="_blank" rel="noopener noreferrer">
-        <p><%- i.desc %></p>
+      <a
+        href="<%= i.href %>"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="u-relative u-inline-block"
+        data-module="Hover"
+      >
         <h2><%- i.ttl %></h2>
+        <div class="cover"></div>
+        <p class="cover"><%- i.desc %></p>
       </a>
     </li>
     <% }); %>

@@ -38,7 +38,10 @@ export default class AppController extends Abstract {
 
     await Utils.timeout(
       [
-        this._loaders.loadWebfont(['Fjalla One']),
+        this._loaders.loadWebfont([
+          'Product Sans',
+          'Noto Sans JP:n7'
+        ]),
         this._loaders.promiseLoad()
       ],
       3000

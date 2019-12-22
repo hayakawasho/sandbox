@@ -4,8 +4,6 @@ import { inject, autoInjectable } from 'tsyringe'
 import { IBootable } from '~/js/defs'
 import { Services } from '~/js/const'
 import { reaction, when } from 'mobx'
-import Particle from './Particle'
-import Perlin from './Perlin'
 
 @autoInjectable()
 export default class Canvas implements IBootable {
@@ -35,8 +33,8 @@ export default class Canvas implements IBootable {
     return this._store.windowHeight
   }
 
-  private get centerY(): number {
-    return this._store.centerY
+  private get windowHalfY(): number {
+    return this._store.windowHalfY
   }
 
   constructor(
@@ -106,7 +104,7 @@ export default class Canvas implements IBootable {
 
     this._app.camera.aspect = ww / wh
 
-    this._app.camera.position.z = this.centerY / Math.tan(radFov * 0.5)
+    this._app.camera.position.z = this.windowHalfY / Math.tan(radFov * 0.5)
 
     this._app.camera.updateProjectionMatrix()
 

@@ -8,9 +8,9 @@ import { Ticker } from '@pixi/ticker'
 import Utils from '~/js/utils/Utils'
 
 const defaults = {
-  len: 10000,
+  len: 20,
   depth: 0,
-  size: 1,
+  size: 10,
   friction: 0.01
 }
 
@@ -31,12 +31,12 @@ export default class Particle extends THREE.Group {
     return this._store.windowHeight
   }
 
-  private get centerX(): number {
-    return this._store.centerX
+  private get windowHalfX(): number {
+    return this._store.windowHalfX
   }
 
-  private get centerY(): number {
-    return this._store.centerY
+  private get windowHalfY(): number {
+    return this._store.windowHalfY
   }
 
   constructor(
@@ -63,8 +63,8 @@ export default class Particle extends THREE.Group {
     reaction(
       () => [this.ww, this.wh],
       ([ww, wh]) => {
-        this.position.x = -this.centerX
-        this.position.y = -this.centerY
+        this.position.x = -this.windowHalfX
+        this.position.y = -this.windowHalfY
       }
     )
 
@@ -98,12 +98,14 @@ export default class Particle extends THREE.Group {
       this._geometry.vertices.push(pos)
     }
 
+    const material = new THREE.PointsMaterial({
+      color: 0x000000,
+      size: this._options.size
+    })
+
     const mesh = new THREE.Points(
       this._geometry,
-      new THREE.PointsMaterial({
-        color: 0x000000,
-        size: this._options.size
-      })
+      material
     )
 
     this.add(mesh)
