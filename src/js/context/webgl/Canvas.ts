@@ -1,14 +1,11 @@
 import * as THREE from 'three'
-import { IStore } from '~/js/defs'
+import { IStore, IBootable } from '~/js/defs'
 import { inject, autoInjectable } from 'tsyringe'
-import { IBootable } from '~/js/defs'
 import { Services } from '~/js/const'
 import { reaction, when } from 'mobx'
 
 @autoInjectable()
 export default class Canvas implements IBootable {
-  private _options
-
   private elements = {
     wrap: document.getElementById('js-canvas-wrap')
   }
@@ -18,10 +15,10 @@ export default class Canvas implements IBootable {
     scene: THREE.Scene,
     camera: THREE.PerspectiveCamera,
   } = {
-    renderer: null,
-    scene: null,
-    camera: null
-  }
+      renderer: null,
+      scene: null,
+      camera: null
+    }
 
   private _requestId: number = 0
 
@@ -38,12 +35,9 @@ export default class Canvas implements IBootable {
   }
 
   constructor(
-    options,
-    @inject(Services.STORE) private _store?: IStore
+    @inject(Services.STORE) private _store?: IStore,
+    @inject(Services.CANVAS_MESH) private _mesh?: THREE.Group
   ) {
-
-    this._options = options
-
     when(
       () => this._store.state.canvasLoaded,
       () => {
@@ -82,7 +76,7 @@ export default class Canvas implements IBootable {
     )
     this._app.camera.lookAt(this._app.scene.position)
 
-    this._app.scene.add(this._options.mesh)
+    this._app.scene.add(this._mesh)
 
     this._store.setState({
       canvasLoaded: true

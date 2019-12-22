@@ -50,13 +50,13 @@
 }
 
 .home-sketchList {
-  font-size: 4rem;
+  font-size: 4.4rem;
   text-align: right;
 
   & > li {
     overflow: hidden;
     line-height: 1;
-    margin: .3em 0;
+    margin: .2em 0;
   }
 
   & h2 {
@@ -80,7 +80,7 @@
 
   & p {
     top: .15em;
-    font-size: 3.4rem;
+    font-size: .86em;
     letter-spacing: -.04em;
     color: #fff;
     font-weight: 600;

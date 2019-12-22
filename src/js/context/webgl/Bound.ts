@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { IStore } from '~/js/defs'
-import { inject, autoInjectable } from 'tsyringe'
+import { inject, injectable } from 'tsyringe'
 import { Services } from '~/js/const'
 import { when, reaction } from 'mobx'
 import { bindAll } from 'lodash-es'
@@ -14,7 +14,7 @@ const defaults = {
   friction: 0.01
 }
 
-@autoInjectable()
+@injectable()
 export default class Particle extends THREE.Group {
   private _options = null
   private _geometry: THREE.Geometry = new THREE.Geometry()
@@ -40,14 +40,12 @@ export default class Particle extends THREE.Group {
   }
 
   constructor(
-    options,
     @inject(Services.STORE) private _store?: IStore
   ) {
     super()
 
     this._options = {
-      ...defaults,
-      ...options || {}
+      ...defaults
     }
 
     bindAll(this, '_update')

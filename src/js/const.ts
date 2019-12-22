@@ -7,7 +7,7 @@ const Services = {
   UA: Symbol(),
   BOOT: Symbol(),
   STORE: Symbol(),
-  CANVAS: Symbol()
+  CANVAS_MESH: Symbol()
 }
 
 const Events = {

@@ -10,10 +10,13 @@ import UaBootable from '~/js/services/UaBootable'
 import Bootstrap from '~/js/services/Bootstrap'
 import LoadModule from '~/js/services/LoadModule'
 import DefaultPage from '~/js/pages/DefaultPage'
-import AttractionPage from '~/js/pages/AttractionPage'
-import BoundPage from '~/js/pages/BoundPage'
+import CanvasPage from '~/js/pages/CanvasPage'
+import Particle from '~/js/context/webgl/Particle'
+import Bound from '~/js/context/webgl/Bound'
+import Spring from '~/js/context/webgl/Spring'
 
-;(() => {
+;
+(() => {
   // BEING IMPORTANT (Bug Safari 10.1)
   // DO NOT REMOVE
   if ((window as any).MAIN_EXECUTED) {
@@ -43,19 +46,27 @@ import BoundPage from '~/js/pages/BoundPage'
 
   router
     .use('/attraction', req => {
-      const page = new AttractionPage()
+      app.provider(Services.CANVAS_MESH, Particle)
+      const page = new CanvasPage()
       page.path = req.path
       controller.goto(page)
     })
     .use('/bound', req => {
-      const page = new BoundPage()
+      app.provider(Services.CANVAS_MESH, Bound)
+      const page = new CanvasPage()
+      page.path = req.path
+      controller.goto(page)
+    })
+    .use('/spring', req => {
+      app.provider(Services.CANVAS_MESH, Spring)
+      const page = new CanvasPage()
       page.path = req.path
       controller.goto(page)
     })
     .use('*', req => {
-      const defalut = new DefaultPage()
-      defalut.path = req.path
-      controller.goto(defalut)
+      const page = new DefaultPage()
+      page.path = req.path
+      controller.goto(page)
     })
 
   // start listening for navigation events

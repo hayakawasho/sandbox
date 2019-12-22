@@ -3,13 +3,10 @@ import { inject, autoInjectable } from 'tsyringe'
 import { IModuleLoader, IEventBus } from '~/js/defs'
 import { Services, Events } from '~/js/const'
 import Canvas from '~/js/context/webgl/Canvas'
-import Bound from '~/js/context/webgl/Bound'
 
 @autoInjectable()
 export default class extends AbstractPage {
-  private _canvas = new Canvas({
-    mesh: new Bound({})
-  })
+  private _canvas = new Canvas()
 
   constructor(
     @inject(Services.MODULE_LOADER) _moduleLoader?: IModuleLoader,
