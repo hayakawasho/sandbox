@@ -33,7 +33,7 @@ export default class Canvas implements IBootable {
     return this._store.windowHeight
   }
 
-  private get windowHalfY(): number {
+  private get halfY(): number {
     return this._store.windowHalfY
   }
 
@@ -104,7 +104,7 @@ export default class Canvas implements IBootable {
 
     this._app.camera.aspect = ww / wh
 
-    this._app.camera.position.z = this.windowHalfY / Math.tan(radFov * 0.5)
+    this._app.camera.position.z = this.halfY / Math.tan(radFov * 0.5)
 
     this._app.camera.updateProjectionMatrix()
 

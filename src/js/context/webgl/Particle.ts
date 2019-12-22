@@ -56,11 +56,11 @@ export default class Particle extends THREE.Group {
     return this._store.windowHeight
   }
 
-  private get windowHalfX(): number {
+  private get halfX(): number {
     return this._store.windowHalfX
   }
 
-  private get windowHalfY(): number {
+  private get halfY(): number {
     return this._store.windowHalfY
   }
 
@@ -155,8 +155,8 @@ export default class Particle extends THREE.Group {
       this._posOfForce.x = posX
       this._posOfForce.y = posY
     } else {
-      this._posOfForce.x = posX * -this.windowHalfX
-      this._posOfForce.y = posY * this.windowHalfY
+      this._posOfForce.x = posX * -this.halfX
+      this._posOfForce.y = posY * this.halfY
     }
 
     for (let i = 0; i < this._options.len; i++) {
@@ -210,24 +210,24 @@ export default class Particle extends THREE.Group {
 
       this._updatePos(p, f, v)
 
-      if (p.x > this.windowHalfX) {
+      if (p.x > this.halfX) {
         // v.x *= -1
-        p.x = -this.windowHalfX
+        p.x = -this.halfX
       }
 
-      if (p.y > this.windowHalfY) {
+      if (p.y > this.halfY) {
         // v.y *= -1
-        p.y = -this.windowHalfY
+        p.y = -this.halfY
       }
 
-      if (p.x < -this.windowHalfX) {
+      if (p.x < -this.halfX) {
         // v.x *= -1
-        p.x = this.windowHalfX
+        p.x = this.halfX
       }
 
-      if (p.y < -this.windowHalfY) {
+      if (p.y < -this.halfY) {
         // v.y *= -1
-        p.y = this.windowHalfY
+        p.y = this.halfY
       }
     }
 

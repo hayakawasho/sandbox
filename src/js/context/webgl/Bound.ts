@@ -31,11 +31,11 @@ export default class Particle extends THREE.Group {
     return this._store.windowHeight
   }
 
-  private get windowHalfX(): number {
+  private get halfX(): number {
     return this._store.windowHalfX
   }
 
-  private get windowHalfY(): number {
+  private get halfY(): number {
     return this._store.windowHalfY
   }
 
@@ -63,8 +63,8 @@ export default class Particle extends THREE.Group {
     reaction(
       () => [this.ww, this.wh],
       ([ww, wh]) => {
-        this.position.x = -this.windowHalfX
-        this.position.y = -this.windowHalfY
+        this.position.x = -this.halfX
+        this.position.y = -this.halfY
       }
     )
 
