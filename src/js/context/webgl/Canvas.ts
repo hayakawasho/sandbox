@@ -15,10 +15,10 @@ export default class Canvas implements IBootable {
     scene: THREE.Scene,
     camera: THREE.PerspectiveCamera,
   } = {
-      renderer: null,
-      scene: null,
-      camera: null
-    }
+    renderer: null,
+    scene: null,
+    camera: null
+  }
 
   private _requestId: number = 0
 

@@ -41,8 +41,6 @@ export default class Particle extends THREE.Group {
 
   private _posOfForce = new THREE.Vector3(0, 0, 0)
 
-  private _phase: 'attraction' | 'repulsion' = 'attraction'
-
   private _vex: IVex = {
     force: [],
     velocity: []
@@ -166,46 +164,6 @@ export default class Particle extends THREE.Group {
 
       this._updateForce(f, v)
 
-      if (this._phase === 'attraction') {
-        this._addAttractionForce(
-          p,
-          f,
-          this._posOfForce.x,
-          this._posOfForce.y,
-          this._posOfForce.z,
-          900,
-          0.02
-        )
-        this._addRepulsionForce(
-          p,
-          f,
-          this._posOfForce.x * 0.5,
-          this._posOfForce.y * 0.5,
-          this._posOfForce.z * 0.5,
-          200,
-          0.02
-        )
-      } else if (this._phase === 'repulsion') {
-        this._addAttractionForce(
-          p,
-          f,
-          this._posOfForce.x * -0.5,
-          this._posOfForce.y * -0.5,
-          this._posOfForce.z * -0.5,
-          500,
-          0.02
-        )
-        this._addRepulsionForce(
-          p,
-          f,
-          this._posOfForce.x,
-          this._posOfForce.y,
-          this._posOfForce.z,
-          300,
-          0.02
-        )
-      }
-
       this._updatePos(p, f, v)
 
       if (p.x > this.halfX) {
@@ -229,14 +187,6 @@ export default class Particle extends THREE.Group {
       }
     }
 
-    if (this._frame % (60 * 8) === 0) {
-      if (this._phase === 'attraction') {
-        this._phase = 'repulsion'
-      } else if (this._phase === 'repulsion') {
-        this._phase = 'attraction';
-      }
-    }
-
     this._frame++
   }
 
@@ -256,48 +206,6 @@ export default class Particle extends THREE.Group {
 
     vex.x += velocity.x
     vex.y += velocity.y
-  }
-
-  private _addAttractionForce(
-    vex, force, forceX, forceY, forceZ, radius, scale
-  ) {
-    let diff = new THREE.Vector3(0, 0, 0)
-    diff.x = vex.x - forceX
-    diff.y = vex.y - forceY
-    diff.z = vex.z - forceZ
-
-    const l = diff.length()
-
-    if (l < radius) {
-      const pct = 1 - (l / radius) // normalize
-
-      diff.normalize()
-
-      force.x = force.x - (diff.x * scale * pct)
-      force.y = force.y - (diff.y * scale * pct)
-      force.z = force.z - (diff.z * scale * pct)
-    }
-  }
-
-  private _addRepulsionForce(
-    vex, force, forceX, forceY, forceZ, radius, scale
-  ) {
-    let diff = new THREE.Vector3(0, 0, 0)
-    diff.x = vex.x - forceX
-    diff.y = vex.y - forceY
-    diff.z = vex.z - forceZ
-
-    const l = diff.length()
-
-    if (l < radius) {
-      const pct = 1 - (l / radius) // normalize
-
-      diff.normalize()
-
-      force.x = force.x + (diff.x * scale * pct)
-      force.y = force.y + (diff.y * scale * pct)
-      force.z = force.z + (diff.z * scale * pct)
-    }
   }
 }
 

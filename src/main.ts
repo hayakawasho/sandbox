@@ -15,8 +15,7 @@ import Particle from '~/js/context/webgl/Particle'
 import Bound from '~/js/context/webgl/Bound'
 import Spring from '~/js/context/webgl/Spring'
 
-;
-(() => {
+;(() => {
   // BEING IMPORTANT (Bug Safari 10.1)
   // DO NOT REMOVE
   if ((window as any).MAIN_EXECUTED) {
