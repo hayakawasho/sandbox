@@ -4,6 +4,7 @@ import { Services } from '~/js/const'
 import { IBootable, IStore } from '~/js/defs'
 import Stats from 'stats.js'
 import Ticker from '~/js/utils/Ticker'
+import { isProd } from '~/js/env'
 
 const checkFPS = () => {
   const stats = new Stats()
@@ -20,8 +21,6 @@ export default class extends Abstract implements IBootable {
   }
 
   boot() {
-    if (process.env.NODE_ENV !== 'production') {
-      checkFPS()
-    }
+    if (!isProd) checkFPS()
   }
 }

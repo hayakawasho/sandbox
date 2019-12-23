@@ -14,7 +14,8 @@ const defaults = {
   friction: 0.01,
   mass: 1.0,
   springiness: .1,
-  distance: 1.0
+  distance: 1.0,
+  radius: 13
 }
 
 let tick = 0
@@ -27,7 +28,7 @@ interface ISpring {
 }
 
 @injectable()
-export default class Particle extends THREE.Group {
+export default class Sphere extends THREE.Group {
   private _options = null
 
   private _ticker: Ticker = new Ticker
@@ -36,7 +37,9 @@ export default class Particle extends THREE.Group {
 
   private _clock = new THREE.Clock(true)
 
-  private _geometry: THREE.Geometry = new THREE.Geometry()
+  private _geometry: THREE.Geometry
+
+  private _mesh: THREE.Mesh
 
   private _spring: ISpring = {
     pos: {
@@ -74,8 +77,7 @@ export default class Particle extends THREE.Group {
 
     when(
       () => this._store.state.canvasLoaded,
-      async () => {
-        await Utils.nextTick()
+      () => {
         this._ticker.start()
       }
     )
@@ -102,71 +104,29 @@ export default class Particle extends THREE.Group {
       y: wh * .5
     }
 
-    for (let i = 0; i < this._options.len; i++) {
-      const pos = new THREE.Vector3(0, 0, 0)
-      pos.x = 0
-      pos.y = i * -20 + 100
+		this._geometry = new THREE.IcosahedronGeometry(this._options.radius, 2)
 
-      this._geometry.vertices.push(pos)
-    }
-
-    for (let i = 0; i < this._options.len - 1; i++) {
-      const p1 = this._geometry.vertices[i]
-      const p2 = this._geometry.vertices[i + 1]
-
-      this._spring.pos.start.push(p1)
-      this._spring.pos.end.push(p2)
-    }
-
-    // console.log(this._geometry.vertices, this._spring.pos)
-
-    const material = new THREE.PointsMaterial({
-      color: 0x000000,
-      size: this._options.size
+    const material = new THREE.MeshPhongMaterial({
+			color: 16777215,
+			fog: true,
+      wireframe: true,
+      opacity: .5,
+			transparent: true
     })
 
-    const mesh = new THREE.Points(
+    this._mesh = new THREE.Mesh(
       this._geometry,
       material
     )
 
-    this.add(mesh)
+    this._mesh.scale.set(10, 10, 10)
+
+    this.add(this._mesh)
   }
 
   private _update(deltaTime) {
-    this._geometry.verticesNeedUpdate = true
-
-    const delta = this._clock.getDelta()
-
-    tick += delta * 0.1
-
-    for (let i = 0; i < this._options.len - 1; i++) {
-      const startPos = this._spring.pos.start[i]
-      const endPos = this._spring.pos.end[i]
-
-      const d = startPos.length() - endPos.length()
-      const f = this._options.springiness * (this._options.distance - d)
-    }
-
-    this._frame++
-  }
-
-  private _resetForce(force) {
-    force.x = 0
-    force.y = 0
-  }
-
-  private _updateForce(force, velocity) {
-    force.x -= velocity.x * this._options.friction * 0.41
-    force.y -= velocity.y * this._options.friction * 0.41
-  }
-
-  private _updatePos(vex, force, velocity) {
-    velocity.x += force.x * 0.41
-    velocity.y += force.y * 0.41
-
-    vex.x += velocity.x
-    vex.y += velocity.y
+		this._mesh.rotation.x += .01;
+		this._mesh.rotation.y += .01;
   }
 }
 

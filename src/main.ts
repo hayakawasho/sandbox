@@ -14,6 +14,9 @@ import CanvasPage from '~/js/pages/CanvasPage'
 import Particle from '~/js/context/webgl/Particle'
 import Bound from '~/js/context/webgl/Bound'
 import Spring from '~/js/context/webgl/Spring'
+import Sphere from '~/js/context/webgl/Sphere'
+import Metaball from '~/js/context/webgl/metaball/Sphere'
+import Flag from '~/js/context/webgl/flag/Flag'
 
 ;(() => {
   // BEING IMPORTANT (Bug Safari 10.1)
@@ -58,6 +61,24 @@ import Spring from '~/js/context/webgl/Spring'
     })
     .use('/spring', req => {
       app.provider(Services.CANVAS_MESH, Spring)
+      const page = new CanvasPage()
+      page.path = req.path
+      controller.goto(page)
+    })
+    .use('/sphere', req => {
+      app.provider(Services.CANVAS_MESH, Sphere)
+      const page = new CanvasPage()
+      page.path = req.path
+      controller.goto(page)
+    })
+    .use('/flag', req => {
+      app.provider(Services.CANVAS_MESH, Flag)
+      const page = new CanvasPage()
+      page.path = req.path
+      controller.goto(page)
+    })
+    .use('/metaball', req => {
+      app.provider(Services.CANVAS_MESH, Metaball)
       const page = new CanvasPage()
       page.path = req.path
       controller.goto(page)

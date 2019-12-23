@@ -6,6 +6,7 @@ import { when, reaction } from 'mobx'
 import { bindAll } from 'lodash-es'
 import { Ticker } from '@pixi/ticker'
 import Utils from '~/js/utils/Utils'
+// const SimplexNoise = require('glsl-noise/simplex/2d')
 
 const defaults = {
   len: 10,

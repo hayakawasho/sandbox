@@ -13,25 +13,25 @@ export default abstract class AbstractHover extends AbstractModule {
   }
 
   initEvents() {
-    if ('ontouchstart' in window) {
-      this.el.addEventListener('touchstart', this.enter, {
-        passive: true
-      })
-      this.el.addEventListener('touchend', this.leave)
-    } else {
+    if ('ontouchstart' in window !== true) {
       this.el.addEventListener('mouseenter', this.enter)
       this.el.addEventListener('mouseleave', this.leave)
     }
+
+    this.el.addEventListener('touchstart', this.enter, {
+      passive: true
+    })
+    this.el.addEventListener('touchend', this.leave)
   }
 
   protected destroyEvents() {
-    if ('ontouchstart' in window) {
-      this.el.removeEventListener('touchstart', this.enter)
-      this.el.removeEventListener('touchend', this.leave)
-    } else {
+    if ('ontouchstart' in window !== true) {
       this.el.removeEventListener('mouseenter', this.enter)
       this.el.removeEventListener('mouseleave', this.leave)
     }
+
+    this.el.removeEventListener('touchstart', this.enter)
+    this.el.removeEventListener('touchend', this.leave)
   }
 
   protected enter() {

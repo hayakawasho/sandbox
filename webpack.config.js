@@ -110,8 +110,11 @@ const config = {
       // glslify
       {
         test: /\.(glsl|vs|fs|vert|frag)$/,
-        use: ['raw-loader', 'glslify-loader'],
-        exclude: /node_modules/
+        exclude: /node_modules/,
+        use: [
+          'raw-loader',
+          'glslify-loader'
+        ]
       },
       // worker
       {
