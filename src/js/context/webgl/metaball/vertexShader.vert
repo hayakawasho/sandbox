@@ -1,20 +1,19 @@
 
-#pragma glslify: cnoise = require(glsl-noise/classic/3d)
+#pragma glslify: snoise = require(glsl-noise/simplex/3d)
 
 varying vec2 vUv;
 varying float noise;
 uniform float time;
 uniform vec2 resolution;
 
-//グネグネの振り幅
 const float amplitude1 = 0.5;
-//グネグネのスピード
-const float speed = 0.25;
+
+const float speed = 0.4;
 
 void main() {
   vUv = uv;
-  noise = cnoise( vec3(normal * amplitude1 + time * speed));
+  noise = snoise(vec3(normal * amplitude1 + time * speed));
 
-  vec3 p = position + normal * noise * 5.0;
-  gl_Position = projectionMatrix * modelViewMatrix * vec4( p, 1.0 );
+  vec3 p = position + normal * noise * 3.0;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
 }

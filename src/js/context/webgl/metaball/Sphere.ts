@@ -5,22 +5,12 @@ import { Services } from '~/js/const'
 import { when, reaction } from 'mobx'
 import { bindAll } from 'lodash-es'
 import { Ticker } from '@pixi/ticker'
-import Utils from '~/js/utils/Utils'
 const vertexShader = require('./vertexShader.vert').default
 const fragmentShader = require('./fragShader.frag').default
 
 const defaults = {
-  len: 10,
-  depth: 0,
-  size: 7,
-  friction: 0.01,
-  mass: 1.0,
-  springiness: .1,
-  distance: 1.0,
-  radius: 13
+  radius: 14
 }
-
-let time = 0.0;
 
 @injectable()
 export default class Sphere extends THREE.Group {
@@ -76,7 +66,7 @@ export default class Sphere extends THREE.Group {
       }
     )
 
-    this._ticker.maxFPS = 60
+    this._ticker.maxFPS = 30
     this._ticker.add(this._update)
 
     this.setup()
@@ -96,7 +86,7 @@ export default class Sphere extends THREE.Group {
     this._uniforms = {
       time: {
         type: 'f',
-        value: time
+        value: 0.0
       },
       resolution: {
         type: 'v2',
@@ -121,8 +111,8 @@ export default class Sphere extends THREE.Group {
   }
 
   private _update(deltaTime) {
-    time = this._clock.getElapsedTime()
-    this._uniforms.time.value = time
+    const delta = this._clock.getDelta()
+    this._uniforms.time.value += delta
   }
 }
 

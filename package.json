@@ -76,6 +76,7 @@
     "@pixi/ticker": "^5.2.0",
     "fastdom": "^1.0.9",
     "firebase-tools": "^7.11.0",
+    "glsl-easings": "^1.0.0",
     "glsl-noise": "0.0.0",
     "glslify-hex": "^2.1.1",
     "gsap": "^3.0.0",
