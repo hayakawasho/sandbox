@@ -57,28 +57,31 @@
 
 <%- include(rootPath + '_inc/_top') -%>
 
-<div class="u-mt-32">
+<div class="page" role="main">
 
   <h1 class="u-sr-only">SKETCH THREEJS</h1>
 
-  <ul class="<%= SCOPE %>-sketchList">
-    <% sketchList.forEach((i, index) => { %>
-    <li>
-      <a
-        href="<%= i.href %>"
-        class="u-relative u-inline-block"
-        data-module="Hover"
-      >
-        <h2><%- i.ttl %></h2>
-        <div
-          class="<%= SCOPE %>-sketchHoverElement _bg"
-          role="presentation"
-        ></div>
-        <p class="<%= SCOPE %>-sketchHoverElement"><%- i.desc %></p>
-      </a>
-    </li>
-    <% }); %>
-  </ul>
+  <div class="u-mt-32">
+    <ul class="<%= SCOPE %>-sketchList">
+      <% sketchList.forEach((i, index) => { %>
+      <li>
+        <a
+          href="<%= i.href %>"
+          class="u-relative u-inline-block"
+          data-module="Hover"
+        >
+          <h2><%- i.ttl %></h2>
+          <div
+            class="<%= SCOPE %>-sketchHoverElement _bg"
+            role="presentation"
+          ></div>
+          <p class="<%= SCOPE %>-sketchHoverElement"><%- i.desc %></p>
+        </a>
+      </li>
+      <% }); %>
+    </ul>
+  </div>
+
 </div>
 
 <%- include(rootPath + '_inc/_bottom') -%>
