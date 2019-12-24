@@ -46,3 +46,8 @@ export interface IModule {
   destroy(): void
   onPageReady(): void
 }
+
+export interface ICanvas {
+  init(): void
+  destroy(): void
+}

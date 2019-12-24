@@ -1,16 +1,14 @@
 import AbstractPage from '~/js/abstracts/AbstractPage'
 import { inject, autoInjectable } from 'tsyringe'
-import { IModuleLoader, IEventBus } from '~/js/defs'
+import { IModuleLoader, IEventBus, ICanvas } from '~/js/defs'
 import { Services, Events } from '~/js/const'
-import Canvas from '~/js/context/webgl/Canvas'
 
 @autoInjectable()
 export default class extends AbstractPage {
-  private _canvas = new Canvas()
-
   constructor(
     @inject(Services.MODULE_LOADER) _moduleLoader?: IModuleLoader,
     @inject(Services.EVENT_BUS) bus?: IEventBus,
+    @inject(Services.CANVAS_WORLD) private _canvas?: ICanvas
   ) {
     super(_moduleLoader, bus)
 
@@ -26,7 +24,7 @@ export default class extends AbstractPage {
   }
 
   private _setup() {
-    this._canvas.boot()
+    this._canvas.init()
   }
 
   protected onAfterPageLoad() {

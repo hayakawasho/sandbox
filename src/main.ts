@@ -12,10 +12,12 @@ import LoadModule from '~/js/services/LoadModule'
 import DefaultPage from '~/js/pages/DefaultPage'
 import CanvasPage from '~/js/pages/CanvasPage'
 import Particle from '~/js/context/webgl/Particle'
+import World from '~/js/context/webgl/Canvas'
 import Bound from '~/js/context/webgl/Bound'
 import Spring from '~/js/context/webgl/Spring'
 import Sphere from '~/js/context/webgl/Sphere'
 import Metaball from '~/js/context/webgl/metaball/Sphere'
+import Webfont from '~/js/context/webgl/webfont/Texture'
 import Flag from '~/js/context/webgl/flag/Flag'
 
 ;(() => {
@@ -35,6 +37,8 @@ import Flag from '~/js/context/webgl/flag/Flag'
   app.provider(Services.STORE, Stores.common)
   app.provider(Services.APP_CONTROLLER, AppController)
   app.provider(Services.MODULE_LOADER, LoadModule)
+  app.provider(Services.CANVAS_WORLD, World)
+  app.provider(Services.CANVAS_MESH, Particle)
 
   // add bootable services
   app.bootableProvider(Services.UA, UaBootable)
@@ -48,7 +52,6 @@ import Flag from '~/js/context/webgl/flag/Flag'
 
   router
     .use('/attraction', req => {
-      app.provider(Services.CANVAS_MESH, Particle)
       const page = new CanvasPage()
       page.path = req.path
       controller.goto(page)
@@ -79,6 +82,12 @@ import Flag from '~/js/context/webgl/flag/Flag'
     })
     .use('/metaball', req => {
       app.provider(Services.CANVAS_MESH, Metaball)
+      const page = new CanvasPage()
+      page.path = req.path
+      controller.goto(page)
+    })
+    .use('/webfont', req => {
+      app.provider(Services.CANVAS_MESH, Webfont)
       const page = new CanvasPage()
       page.path = req.path
       controller.goto(page)

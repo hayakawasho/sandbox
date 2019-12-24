@@ -1,24 +1,25 @@
 import * as THREE from 'three'
-import { IStore, IBootable } from '~/js/defs'
-import { inject, autoInjectable } from 'tsyringe'
+import { IStore } from '~/js/defs'
+import { inject, injectable } from 'tsyringe'
 import { Services } from '~/js/const'
 import { reaction, when } from 'mobx'
 import { bindAll } from 'lodash-es'
 import { deg2rad } from '~/js/utils/math'
 import { isProd } from '~/js/env'
+import Abstract from '~/js/abstracts/Abstract'
 
 interface IPointerDelta {
   x: number
   y: number
 }
 
-@autoInjectable()
-export default class Canvas implements IBootable {
+@injectable()
+export default class Canvas extends Abstract {
   private elements = {
     wrap: document.getElementById('js-canvas-wrap')
   }
 
-  private _app: {
+  public app: {
     renderer: THREE.WebGLRenderer,
     scene: THREE.Scene,
     camera: THREE.PerspectiveCamera,
@@ -55,59 +56,61 @@ export default class Canvas implements IBootable {
     @inject(Services.STORE) private _store?: IStore,
     @inject(Services.CANVAS_MESH) private _mesh?: THREE.Group
   ) {
+    super()
 
-    bindAll(this, '_onMouseMove', '_onTouchStart', '_onTouchMove', '_onTouchend')
+    bindAll(this, 'onMouseMove', 'onTouchStart', 'onTouchMove', 'onTouchend')
 
     when(
       () => this._store.state.canvasLoaded,
       () => {
         this.elements.wrap.classList.add('is-visible')
 
-        this.animate()
+        this.start()
 
-        this.addEvents()
+        this.initEvents()
       }
     )
 
     reaction(
       () => [this.ww, this.wh],
       ([ww, wh]) => {
-        if (!this._app.renderer) return
+        if (!this.app.renderer) return
         this._resize(ww, wh)
       }
     )
   }
 
-  boot() {
+  init() {
     const ww = window.innerWidth
     const wh = window.innerHeight
 
-    this._app.renderer = new THREE.WebGLRenderer({
+    this.app.renderer = new THREE.WebGLRenderer({
       canvas: this.elements.wrap.getElementsByTagName('canvas')[0],
       alpha: true
     })
-    this._app.renderer.setPixelRatio(window.devicePixelRatio)
-    this._app.renderer.setSize(ww, wh)
-    // this._app.renderer.setClearColor(new THREE.Color(0xffffff), 1.0)
+    this.app.renderer.setPixelRatio(window.devicePixelRatio)
+    this.app.renderer.setSize(ww, wh)
 
-    this._app.scene = new THREE.Scene()
+    // this.app.renderer.setClearColor(new THREE.Color(0xffffff), 1.0)
 
-    this._app.camera = new THREE.PerspectiveCamera(
+    this.app.scene = new THREE.Scene()
+
+    this.app.camera = new THREE.PerspectiveCamera(
       60,
       ww / wh,
       10,
       10000
     )
-    this._app.camera.lookAt(this._app.scene.position)
+    this.app.camera.lookAt(this.app.scene.position)
 
     // let light = new THREE.AmbientLight(0xffffff, 1.0)
-    // this._app.scene.add(light)
+    // this.app.scene.add(light)
 
-    this._app.scene.add(this._mesh)
+    this.app.scene.add(this._mesh)
 
     if (!isProd) {
       const axesHelper = new THREE.AxesHelper(10)
-      this._app.scene.add(axesHelper)
+      this.app.scene.add(axesHelper)
     }
 
     this._store.setState({
@@ -115,32 +118,36 @@ export default class Canvas implements IBootable {
     })
   }
 
-  addEvents() {
-    if ('ontouchstart' in window !== true) {
-      window.addEventListener('mousemove', this._onMouseMove)
-    }
+  destroy() {
 
-    window.addEventListener('touchstart', this._onTouchStart)
-    window.addEventListener('touchmove', this._onTouchMove)
-    window.addEventListener('touchend', this._onTouchend)
-    window.addEventListener('touchcancel', this._onTouchend)
   }
 
-  removeEvents() {
+  protected initEvents() {
     if ('ontouchstart' in window !== true) {
-      window.removeEventListener('mousemove', this._onMouseMove)
+      window.addEventListener('mousemove', this.onMouseMove)
     }
 
-    window.removeEventListener('touchstart', this._onTouchStart)
-    window.removeEventListener('touchmove', this._onTouchMove)
-    window.removeEventListener('touchend', this._onTouchend)
-    window.removeEventListener('touchcancel', this._onTouchend)
+    window.addEventListener('touchstart', this.onTouchStart)
+    window.addEventListener('touchmove', this.onTouchMove)
+    window.addEventListener('touchend', this.onTouchend)
+    window.addEventListener('touchcancel', this.onTouchend)
   }
 
-  animate() {
-    this._requestId = requestAnimationFrame(this.animate.bind(this))
+  protected destroyEvents() {
+    if ('ontouchstart' in window !== true) {
+      window.removeEventListener('mousemove', this.onMouseMove)
+    }
 
-    this._app.renderer.render(this._app.scene, this._app.camera)
+    window.removeEventListener('touchstart', this.onTouchStart)
+    window.removeEventListener('touchmove', this.onTouchMove)
+    window.removeEventListener('touchend', this.onTouchend)
+    window.removeEventListener('touchcancel', this.onTouchend)
+  }
+
+  start() {
+    this._requestId = requestAnimationFrame(this.start.bind(this))
+
+    this.app.renderer.render(this.app.scene, this.app.camera)
   }
 
   stop() {
@@ -148,35 +155,35 @@ export default class Canvas implements IBootable {
   }
 
   private _resize(ww, wh) {
-    const radFov = deg2rad(this._app.camera.fov)
+    const radFov = deg2rad(this.app.camera.fov)
 
-    this._app.camera.aspect = ww / wh
+    this.app.camera.aspect = ww / wh
 
-    this._app.camera.position.z = this.halfY / Math.tan(radFov * 0.5)
+    this.app.camera.position.z = this.halfY / Math.tan(radFov * 0.5)
 
-    this._app.camera.updateProjectionMatrix()
+    this.app.camera.updateProjectionMatrix()
 
-    this._app.renderer.setSize(ww, wh)
+    this.app.renderer.setSize(ww, wh)
   }
 
-  private _onMouseMove(e: MouseEvent) {
+  protected onMouseMove(e: MouseEvent) {
 
   }
 
-  private _onTouchStart(e: TouchEvent) {
+  protected onTouchStart(e: TouchEvent) {
     this.isDrag = true
   }
 
-  private _onTouchMove(e: TouchEvent) {
+  protected onTouchMove(e: TouchEvent) {
 
   }
 
-  private _onTouchend(e: TouchEvent) {
+  protected onTouchend(e: TouchEvent) {
     this.isDrag = false
   }
 
 
-  private _getDelta(x: number, y: number) {
+  protected getDelta(x: number, y: number) {
 
   }
 }

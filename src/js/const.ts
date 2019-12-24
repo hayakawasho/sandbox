@@ -7,6 +7,7 @@ const Services = {
   UA: Symbol(),
   BOOT: Symbol(),
   STORE: Symbol(),
+  CANVAS_WORLD: Symbol(),
   CANVAS_MESH: Symbol()
 }
 
