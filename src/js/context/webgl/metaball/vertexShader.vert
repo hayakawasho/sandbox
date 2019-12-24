@@ -8,7 +8,7 @@ uniform vec2 resolution;
 
 const float amplitude1 = 0.5;
 
-const float speed = 0.4;
+const float speed = 0.5;
 
 void main() {
   vUv = uv;

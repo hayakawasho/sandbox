@@ -51,8 +51,11 @@ export default class Sphere extends THREE.Group {
 
     bindAll(this, '_update')
 
+    this._ticker.maxFPS = 30
+    this._ticker.add(this._update)
+
     when(
-      () => this._store.state.canvasLoaded,
+      () => this._store.state.siteLoaded,
       () => {
         this._ticker.start()
       }
@@ -65,9 +68,6 @@ export default class Sphere extends THREE.Group {
         this.position.y = 0
       }
     )
-
-    this._ticker.maxFPS = 30
-    this._ticker.add(this._update)
 
     this.setup()
   }
@@ -111,8 +111,7 @@ export default class Sphere extends THREE.Group {
   }
 
   private _update(deltaTime) {
-    const delta = this._clock.getDelta()
-    this._uniforms.time.value += delta
+    this._uniforms.time.value += .01 * deltaTime
   }
 }
 

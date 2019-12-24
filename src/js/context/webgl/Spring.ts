@@ -28,7 +28,7 @@ interface ISpring {
 
 @injectable()
 export default class Particle extends THREE.Group {
-  private _options = null
+  private _options
 
   private _ticker: Ticker = new Ticker
 
@@ -72,10 +72,12 @@ export default class Particle extends THREE.Group {
 
     bindAll(this, '_update')
 
+    this._ticker.maxFPS = 60
+    this._ticker.add(this._update)
+
     when(
-      () => this._store.state.canvasLoaded,
-      async () => {
-        await Utils.nextTick()
+      () => this._store.state.siteLoaded,
+      () => {
         this._ticker.start()
       }
     )
@@ -87,9 +89,6 @@ export default class Particle extends THREE.Group {
         this.position.y = 0
       }
     )
-
-    this._ticker.maxFPS = 60
-    this._ticker.add(this._update)
 
     this.setup()
   }
@@ -117,8 +116,6 @@ export default class Particle extends THREE.Group {
       this._spring.pos.start.push(p1)
       this._spring.pos.end.push(p2)
     }
-
-    // console.log(this._geometry.vertices, this._spring.pos)
 
     const material = new THREE.PointsMaterial({
       color: 0x000000,

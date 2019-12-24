@@ -5,7 +5,6 @@ import { Services } from '~/js/const'
 import { when, reaction } from 'mobx'
 import { bindAll } from 'lodash-es'
 import { Ticker } from '@pixi/ticker'
-import Utils from '~/js/utils/Utils'
 
 const defaults = {
   len: 10000,
@@ -29,7 +28,7 @@ interface IVex {
 
 @injectable()
 export default class Particle extends THREE.Group {
-  private _options = null
+  private _options
 
   private _ticker: Ticker = new Ticker
 
@@ -75,10 +74,12 @@ export default class Particle extends THREE.Group {
 
     bindAll(this, '_update')
 
+    this._ticker.maxFPS = 30
+    this._ticker.add(this._update)
+
     when(
-      () => this._store.state.canvasLoaded,
-      async () => {
-        await Utils.nextTick()
+      () => this._store.state.siteLoaded,
+      () => {
         this._ticker.start()
       }
     )
@@ -90,9 +91,6 @@ export default class Particle extends THREE.Group {
         this.position.y = 0
       }
     )
-
-    this._ticker.maxFPS = 60
-    this._ticker.add(this._update)
 
     this.setup()
   }
@@ -141,9 +139,7 @@ export default class Particle extends THREE.Group {
   private _update(deltaTime) {
     this._geometry.verticesNeedUpdate = true
 
-    const delta = this._clock.getDelta()
-
-    tick += delta * 0.1
+    tick += deltaTime 
 
     const posX = Math.cos(tick * this._options.speed.x)
     const posY = Math.sin(tick * this._options.speed.y)

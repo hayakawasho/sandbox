@@ -16,7 +16,7 @@ const defaults = {
 
 @injectable()
 export default class Particle extends THREE.Group {
-  private _options = null
+  private _options
   private _geometry: THREE.Geometry = new THREE.Geometry()
   private _ticker: Ticker = new Ticker
   private _velocity: Array<THREE.Vector3> = []
@@ -50,10 +50,12 @@ export default class Particle extends THREE.Group {
 
     bindAll(this, '_update')
 
+    this._ticker.maxFPS = 60
+    this._ticker.add(this._update)
+
     when(
-      () => this._store.state.canvasLoaded,
-      async () => {
-        await Utils.nextTick()
+      () => this._store.state.siteLoaded,
+      () => {
         this._ticker.start()
       }
     )
@@ -65,9 +67,6 @@ export default class Particle extends THREE.Group {
         this.position.y = -this.halfY
       }
     )
-
-    this._ticker.maxFPS = 60
-    this._ticker.add(this._update)
 
     this.setup()
   }

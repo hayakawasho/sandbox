@@ -61,7 +61,7 @@ export default class Canvas extends Abstract {
     bindAll(this, 'onMouseMove', 'onTouchStart', 'onTouchMove', 'onTouchend')
 
     when(
-      () => this._store.state.canvasLoaded,
+      () => this._store.state.siteLoaded,
       () => {
         this.elements.wrap.classList.add('is-visible')
 
@@ -75,6 +75,7 @@ export default class Canvas extends Abstract {
       () => [this.ww, this.wh],
       ([ww, wh]) => {
         if (!this.app.renderer) return
+
         this._resize(ww, wh)
       }
     )

@@ -55,10 +55,12 @@ export default class Particle extends THREE.Group {
 
     bindAll(this, '_update')
 
+    this._ticker.maxFPS = 60
+    this._ticker.add(this._update)
+
     when(
-      () => this._store.state.canvasLoaded,
-      async () => {
-        await Utils.nextTick()
+      () => this._store.state.siteLoaded,
+      () => {
         this._ticker.start()
       }
     )
@@ -70,9 +72,6 @@ export default class Particle extends THREE.Group {
         this.position.y = 0
       }
     )
-
-    this._ticker.maxFPS = 60
-    this._ticker.add(this._update)
 
     this.setup()
   }

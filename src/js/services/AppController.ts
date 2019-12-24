@@ -8,7 +8,15 @@ import { when } from 'mobx'
 @injectable()
 export default class AppController extends Abstract {
   private _currentScene = null
-  private _app = document.getElementById('js-app')
+  private rootElement = document.getElementById('js-app')
+
+  private get isCanvasLoaded() {
+    return this._store.state.canvasLoaded
+  }
+
+  private get isWebfontLoaded() {
+    return this._store.state.webfontLoaded
+  }
 
   constructor(
     @inject(Services.EVENT_BUS) private _bus: IEventBus,
@@ -18,16 +26,22 @@ export default class AppController extends Abstract {
     super()
 
     when(
-      () => this._store.state.siteLoaded,
+      () => this.isWebfontLoaded,
       () => {
-        this._app.classList.remove('is-loading')
+        if (this.isWebfontLoaded) {
+          this.rootElement.classList.add('is-webfontloaded')
+
+          if (this.isCanvasLoaded) this._hideLooader()
+        }
       }
     )
 
     when(
-      () => this._store.state.webfontLoaded,
+      () => this.isCanvasLoaded,
       () => {
-        this._app.classList.add('is-webfontloaded')
+        if (this.isCanvasLoaded && this.isWebfontLoaded) {
+          this._hideLooader()
+        }
       }
     )
   }
@@ -39,7 +53,7 @@ export default class AppController extends Abstract {
     await Utils.timeout(
       [
         this._loaders.loadWebfont([
-          'Product Sans',
+          'Product Sans:n7',
           'Noto Sans JP:n7'
         ]),
         this._loaders.promiseLoad()
@@ -51,7 +65,6 @@ export default class AppController extends Abstract {
     console.timeEnd('load time')
 
     this._store.setState({
-      siteLoaded: true,
       webfontLoaded: true
     })
 
@@ -68,9 +81,23 @@ export default class AppController extends Abstract {
   }
 
   async goto(scene) {
+    if (scene.path === '/') {
+      // homeはcanvas動かしていないので
+      // canvasLoadedになっているとする
+      this._hideLooader()
+    }
+
     if (!this._currentScene) {
       await this._once(scene)
       return
     }
+  }
+
+  private _hideLooader() {
+    this.rootElement.classList.remove('is-loading')
+
+    this._store.setState({
+      siteLoaded: true
+    })
   }
 }
