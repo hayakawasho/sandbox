@@ -1,0 +1,8 @@
+@font-face {
+  font-family: 'Product Sans';
+  font-style: normal;
+  font-weight: 700;
+  src:
+    local('ProductSans-Bold'),
+    url('/fonts/ProductSans-Bold.woff2') format('woff2');
+}

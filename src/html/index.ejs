@@ -42,6 +42,11 @@
       desc: 'メタボール'
     },
     // {
+    //   href: '/webfont/',
+    //   ttl: 'Webfont',
+    //   desc: 'ウェブフォント'
+    // },
+    // {
     //   href: '/wave/',
     //   ttl: 'Wave',
     //   desc: '波'
@@ -53,6 +58,9 @@
 <%- include(rootPath + '_inc/_top') -%>
 
 <div class="u-mt-32">
+
+  <h1 class="u-sr-only">SKETCH THREEJS</h1>
+
   <ul class="<%= SCOPE %>-sketchList">
     <% sketchList.forEach((i, index) => { %>
     <li>
@@ -62,8 +70,11 @@
         data-module="Hover"
       >
         <h2><%- i.ttl %></h2>
-        <div class="cover"></div>
-        <p class="cover"><%- i.desc %></p>
+        <div
+          class="<%= SCOPE %>-sketchHoverElement _bg"
+          role="presentation"
+        ></div>
+        <p class="<%= SCOPE %>-sketchHoverElement"><%- i.desc %></p>
       </a>
     </li>
     <% }); %>

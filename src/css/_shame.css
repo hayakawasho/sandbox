@@ -11,15 +11,6 @@
 //   8. Try and clean _shame.css up when you have some down time.
  */
 
-@font-face {
-  font-family: 'Product Sans';
-  font-style: normal;
-  font-weight: 700;
-  src:
-    local('ProductSans-Bold'),
-    url('/fonts/ProductSans-Bold.woff2') format('woff2');
-}
-
 .canvas {
   position: fixed;
   top: 0;
@@ -36,55 +27,5 @@
   & > canvas {
     width: 100%;
     height: 100%;
-  }
-}
-
-.cover {
-  position: absolute;
-  top: 0;
-  opacity: 0;
-
-  @nest .is-hover & {
-    opacity: 1;
-  }
-}
-
-.home-sketchList {
-  font-size: 4.4rem;
-  text-align: right;
-
-  & > li {
-    overflow: hidden;
-    line-height: 1;
-    margin: .2em 0;
-    white-space: nowrap;
-  }
-
-  & h2 {
-    text-transform: uppercase;
-    letter-spacing: .04em;
-    font-weight: 700;
-    color: #000;
-    margin-right: -.14em;
-  }
-
-  & .cover {
-    width: 100%;
-  }
-
-  & div {
-    background-color: #000;
-    top: .04em;
-    height: 0.86em;
-  }
-
-  & p {
-    top: .15em;
-    font-size: .86em;
-    letter-spacing: -.04em;
-    color: #fff;
-    font-weight: 600;
-    line-height: 1;
-    text-align: left;
   }
 }

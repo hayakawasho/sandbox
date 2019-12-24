@@ -1,0 +1,46 @@
+.home-sketchList {
+  font-size: 4.4rem;
+  text-align: right;
+
+  & > li {
+    overflow: hidden;
+    line-height: 1;
+    margin: .2em 0;
+    white-space: nowrap;
+  }
+
+  & h2 {
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    font-weight: 700;
+    color: #000;
+    margin-right: -.14em;
+  }
+
+  & p {
+    top: .15em;
+    font-size: .86em;
+    letter-spacing: -.04em;
+    color: #fff;
+    font-weight: 600;
+    line-height: 1;
+    text-align: left;
+  }
+
+  & ._bg {
+    background-color: #000;
+    top: .04em;
+    height: 0.86em;
+  }
+}
+
+.home-sketchHoverElement {
+  position: absolute;
+  left: 0;
+  opacity: 0;
+  width: 100%;
+
+  @nest .is-hover & {
+    opacity: 1;
+  }
+}

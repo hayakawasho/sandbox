@@ -1,7 +1,7 @@
 precision highp float;
 
-#pragma glslify: PI = require('./PI')
-#pragma glslify: hsv2rgb = require('./hsv2rgb')
+#pragma glslify: PI = require('../_lib/PI')
+#pragma glslify: hsv2rgb = require('../_lib/hsv2rgb')
 #pragma glslify: easeOutCubic = require('glsl-easings/cubic-out')
 
 varying vec2 vUv;

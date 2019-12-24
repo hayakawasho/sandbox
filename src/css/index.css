@@ -1,5 +1,6 @@
 /* base */
 @import 'tailwindcss/base';
+@import 'base/font-face';
 @import 'base/custom-properties';
 @import 'base/custom-media';
 @import 'base/base';
@@ -7,6 +8,7 @@
 /* parts */
 
 /* namespace */
+@import 'namespace/home';
 
 /* other */
 @import 'tailwindcss/components';
