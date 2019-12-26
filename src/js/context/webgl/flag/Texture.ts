@@ -5,28 +5,24 @@ import { Services } from '~/js/const'
 import { when, reaction } from 'mobx'
 import { bindAll } from 'lodash-es'
 import { Ticker } from '@pixi/ticker'
-import Utils from '~/js/utils/Utils'
-const vertexShader = require('./vertexShader.vert').default
+
+const vertexShader = require('./vertShader.vert').default
 const fragmentShader = require('./fragShader.frag').default
 
 const defaults = {
-  speed: 2.0,
-  offset: 20.0,
-  text: 'HELLO WORLD',
-  fontSize: 40,
+  offset: 25.0,
+  fontSize: 240,
 }
 
+const text = 'Hello World'
+
 @injectable()
-export default class Particle extends THREE.Group {
+export default class extends THREE.Group {
   private _options
 
   private _uniforms
 
   private _ticker: Ticker = new Ticker
-
-  private _frame = 0
-
-  private _clock = new THREE.Clock(true)
 
   private get ww(): number {
     return this._store.windowWidth
@@ -55,7 +51,7 @@ export default class Particle extends THREE.Group {
 
     bindAll(this, '_update')
 
-    this._ticker.maxFPS = 60
+    this._ticker.maxFPS = 30
     this._ticker.add(this._update)
 
     when(
@@ -79,65 +75,58 @@ export default class Particle extends THREE.Group {
   setup() {
     const ww = window.innerWidth
     const wh = window.innerHeight
-    const half = {
-      x: ww * .5,
-      y: wh * .5
-    }
-    const dpr = window.devicePixelRatio
 
     const canvas = document.createElement('canvas')
-    canvas.width = ww * dpr
-    canvas.height = wh * dpr
+		canvas.height = 2048
+    canvas.width = canvas.height * ww / wh
 
     const ctx = canvas.getContext('2d')
-    ctx.font = `bold ${this._options.fontSize}px Helvetica`
+		ctx.font = 'Bold '+ this._options.fontSize +'px Helvetica'
+    ctx.strokeStyle = '#333'
+    ctx.lineWidth = 4
 
-    const width = ctx.measureText(this._options.text).width
+    const width = ctx.measureText(text).width
 
-    ctx.fillText(
-      this._options.text,
-      half.x - width * .5,
-      half.y + this._options.fontSize * .5
-    )
+    ctx.strokeText(text, canvas.width * .5 - width * .5, canvas.height * .5 + this._options.fontSize / (2 * 1.5))
+		ctx.stroke()
 
-    ctx.fill()
+    const texture = new THREE.Texture(canvas)
+		texture.needsUpdate = true
 
-    const tex = new THREE.Texture(canvas)
-
-    tex.needsUpdate = true
-
-    const geometry = new THREE.PlaneGeometry(ww, wh, 200, 200)
+    const geometry = new THREE.PlaneGeometry(ww, wh)
 
     this._uniforms = {
-			texture: {
+			texture1: {
 				type: 't',
-				value: tex
+				value: texture
 			},
 			time: {
 				type: 'f',
-				value: this._frame
+				value: 0.0
+      },
+			offset: {
+				type: 'f',
+				value: this._options.offset
 			},
       resolution: {
-        type: '2f'
+        type: 'v2',
+        value: new THREE.Vector2(ww, wh)
       }
     }
 
     const material = new THREE.ShaderMaterial({
       uniforms: this._uniforms,
       vertexShader,
-      fragmentShader,
-      transparent : true
+      fragmentShader
     })
 
     const mesh = new THREE.Mesh(geometry, material)
 
-    this.add(mesh)
+		this.add(mesh)
   }
 
   private _update(deltaTime) {
-    const delta = this._clock.getDelta()
-
-    this._uniforms.time.value += delta
+    this._uniforms.time.value += .01 * deltaTime
   }
 }
 

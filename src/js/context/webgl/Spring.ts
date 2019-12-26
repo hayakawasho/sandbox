@@ -27,7 +27,7 @@ interface ISpring {
 }
 
 @injectable()
-export default class Particle extends THREE.Group {
+export default class extends THREE.Group {
   private _options
 
   private _ticker: Ticker = new Ticker

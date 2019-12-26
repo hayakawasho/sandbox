@@ -11,7 +11,7 @@ const defaults = {
 }
 
 @injectable()
-export default class Sphere extends THREE.Group {
+export default class extends THREE.Group {
   private _options
 
   private _ticker: Ticker = new Ticker
@@ -45,7 +45,7 @@ export default class Sphere extends THREE.Group {
 
     bindAll(this, '_update')
 
-    this._ticker.maxFPS = 30
+    this._ticker.maxFPS = 60
     this._ticker.add(this._update)
 
     when(
@@ -88,8 +88,8 @@ export default class Sphere extends THREE.Group {
   }
 
   private _update(deltaTime) {
-		this._mesh.rotation.x += .01 * deltaTime
-		this._mesh.rotation.y += .01 * deltaTime
+		this._mesh.rotation.x += .01
+		this._mesh.rotation.y += .01
   }
 }
 

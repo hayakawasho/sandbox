@@ -14,7 +14,7 @@ interface IPointerDelta {
 }
 
 @injectable()
-export default class Canvas extends Abstract {
+export default class World extends Abstract {
   private elements = {
     wrap: document.getElementById('js-canvas-wrap')
   }
@@ -97,10 +97,10 @@ export default class Canvas extends Abstract {
     this.app.scene = new THREE.Scene()
 
     this.app.camera = new THREE.PerspectiveCamera(
-      60,
+      45,
       ww / wh,
-      10,
-      10000
+      1,
+      1000
     )
     this.app.camera.lookAt(this.app.scene.position)
 
@@ -182,7 +182,6 @@ export default class Canvas extends Abstract {
   protected onTouchend(e: TouchEvent) {
     this.isDrag = false
   }
-
 
   protected getDelta(x: number, y: number) {
 

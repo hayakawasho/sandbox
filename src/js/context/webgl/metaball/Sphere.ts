@@ -5,7 +5,8 @@ import { Services } from '~/js/const'
 import { when, reaction } from 'mobx'
 import { bindAll } from 'lodash-es'
 import { Ticker } from '@pixi/ticker'
-const vertexShader = require('./vertexShader.vert').default
+
+const vertexShader = require('./vertShader.vert').default
 const fragmentShader = require('./fragShader.frag').default
 
 const defaults = {
@@ -13,7 +14,7 @@ const defaults = {
 }
 
 @injectable()
-export default class Sphere extends THREE.Group {
+export default class extends THREE.Group {
   private _options
 
   private _uniforms

@@ -17,8 +17,7 @@ import Bound from '~/js/context/webgl/Bound'
 import Spring from '~/js/context/webgl/Spring'
 import Sphere from '~/js/context/webgl/Sphere'
 import Metaball from '~/js/context/webgl/metaball/Sphere'
-import Webfont from '~/js/context/webgl/webfont/Texture'
-import Flag from '~/js/context/webgl/flag/Flag'
+import Flag from '~/js/context/webgl/flag/Texture'
 
 ;(() => {
   // BEING IMPORTANT (Bug Safari 10.1)
@@ -74,20 +73,14 @@ import Flag from '~/js/context/webgl/flag/Flag'
       page.path = req.path
       controller.goto(page)
     })
-    .use('/flag', req => {
-      app.provider(Services.CANVAS_MESH, Flag)
-      const page = new CanvasPage()
-      page.path = req.path
-      controller.goto(page)
-    })
     .use('/metaball', req => {
       app.provider(Services.CANVAS_MESH, Metaball)
       const page = new CanvasPage()
       page.path = req.path
       controller.goto(page)
     })
-    .use('/webfont', req => {
-      app.provider(Services.CANVAS_MESH, Webfont)
+    .use('/flag', req => {
+      app.provider(Services.CANVAS_MESH, Flag)
       const page = new CanvasPage()
       page.path = req.path
       controller.goto(page)

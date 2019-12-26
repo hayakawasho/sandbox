@@ -15,7 +15,7 @@ const defaults = {
 }
 
 @injectable()
-export default class Particle extends THREE.Group {
+export default class extends THREE.Group {
   private _options
   private _geometry: THREE.Geometry = new THREE.Geometry()
   private _ticker: Ticker = new Ticker

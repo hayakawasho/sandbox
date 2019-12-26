@@ -27,7 +27,7 @@ interface IVex {
 }
 
 @injectable()
-export default class Particle extends THREE.Group {
+export default class extends THREE.Group {
   private _options
 
   private _ticker: Ticker = new Ticker
@@ -74,7 +74,7 @@ export default class Particle extends THREE.Group {
 
     bindAll(this, '_update')
 
-    this._ticker.maxFPS = 30
+    this._ticker.maxFPS = 60
     this._ticker.add(this._update)
 
     when(
@@ -139,7 +139,9 @@ export default class Particle extends THREE.Group {
   private _update(deltaTime) {
     this._geometry.verticesNeedUpdate = true
 
-    tick += deltaTime 
+    const delta = this._clock.getDelta()
+
+    tick += delta * .1
 
     const posX = Math.cos(tick * this._options.speed.x)
     const posY = Math.sin(tick * this._options.speed.y)

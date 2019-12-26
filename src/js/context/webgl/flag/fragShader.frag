@@ -1,19 +1,18 @@
-precision mediump float;
+precision highp float;
 
-uniform sampler2D texture;
-uniform float noiseCoefficient;
+#pragma glslify: snoise = require(glsl-noise/simplex/2d)
+
 uniform float time;
-uniform vec2 resolution;
-
+uniform float offset;
+uniform sampler2D texture1;
 varying vec2 vUv;
 
-#pragma glslify: snoise2 = require('glsl-noise/simplex/2d')
+void main() {
+  vec2 uv = vUv.xy;
+  vec3 pos = vec3(uv.x, 1.0, uv.y) + time;
 
-void main(){
-  float noise = snoise2(gl_FragCoord.xy / resolution.y / 50.0);
-  vec2 texCoord = vec2(
-    vUv.x + (sin((time + noise) * 100.0) * 2.0 / resolution.x) * noiseCoefficient,
-    vUv.y + (cos((time + noise) * 60.0) * 2.0 / resolution.y) * noiseCoefficient
-  );
-  gl_FragColor = texture2D(texture, texCoord);
+  float st_offset = -0.4 * snoise(pos.xz);
+  st_offset = st_offset * offset;
+
+  gl_FragColor = 1.0 * texture2D(texture1, uv + st_offset * 0.001);
 }
